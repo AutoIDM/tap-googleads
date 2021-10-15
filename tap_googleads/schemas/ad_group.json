@@ -1,0 +1,68 @@
+{
+    "type": "object",
+    "properties": {
+        "adGroup": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "targetingSetting": {
+                    "type": "object",
+                    "properties": {
+                        "targetRestrictions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "targetingDimension": {
+                                        "type": "string"
+                                    },
+                                    "bidOnly": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "baseAdGroup": {
+                    "type": "string"
+                },
+                "campaign": {
+                    "type": "string"
+                },
+                "cpcBidMicros": {
+                    "type": "string"
+                },
+                "cpmBidMicros": {
+                    "type": "string"
+                },
+                "targetCpaMicros": {
+                    "type": "string"
+                },
+                "cpvBidMicros": {
+                    "type": "string"
+                },
+                "targetCpmMicros": {
+                    "type": "string"
+                },
+                "effectiveTargetCpaMicros": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,33 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: 3a2ff195-c7b9-43e6-9dd7-a3e1d98b543b
+plugins:
+  extractors:
+  - name: tap-googleads
+    namespace: tap_googleads
+    executable: ./tap-googleads.sh
+    capabilities:
+    - state
+    - catalog
+    - discover
+    settings:
+    - name: client_id
+      kind: password
+    - name: client_secret
+      kind: password
+    - name: developer_token
+      kind: password
+    - name: refresh_token
+      kind: password
+    - name: customer_id
+      kind: password
+    - name: login_customer_id
+      kind: password
+    - name: start_date
+      value: '2010-01-01T00:00:00Z'
+    config:
+      start_date: '2010-01-01T00:00:00Z'
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
