@@ -46,7 +46,6 @@ class GoogleAdsStream(RESTStream):
             headers["User-Agent"] = self.config.get("user_agent")
         headers["developer-token"] = self.config["developer_token"]
         headers["login-customer-id"] = self.config["login_customer_id"]
-        self.logger.info(headers)
         return headers
 
     def get_next_page_token(
