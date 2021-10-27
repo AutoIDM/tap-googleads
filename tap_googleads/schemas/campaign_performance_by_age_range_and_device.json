@@ -1,0 +1,88 @@
+{
+                "type": "object",
+                "properties": {
+                    "campaign": {
+                        "type": "object",
+                        "properties": {
+                            "resourceName": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            },
+                            "advertisingChannelType": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "adGroup": {
+                        "type": "object",
+                        "properties": {
+                            "resourceName": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "metrics": {
+                        "type": "object",
+                        "properties": {
+                            "clicks": {
+                                "type": "string"
+                            },
+                            "costMicros": {
+                                "type": "string"
+                            },
+                            "ctr": {
+                                "type": "number"
+                            },
+                            "averageCpc": {
+                                "type": "number"
+                            },
+                            "impressions": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "adGroupCriterion": {
+                        "type": "object",
+                        "properties": {
+                            "resourceName": {
+                                "type": "string"
+                            },
+                            "ageRange": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "ageRangeView": {
+                        "type": "object",
+                        "properties": {
+                            "resourceName": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "segments": {
+                        "type": "object",
+                        "properties": {
+                            "device": {
+                                "type": "string"
+                            },
+                            "date": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+}
