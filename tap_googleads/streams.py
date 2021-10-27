@@ -212,3 +212,15 @@ class AdGroupsPerformance(ReportsStream):
     primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "adgroups_performance.json"
+
+class CampaignPerformance(ReportsStream):
+    """Campaign Performance"""
+
+    gaql = """
+    SELECT campaign.name, campaign.status, segments.device, segments.date, metrics.impressions, metrics.clicks, metrics.ctr, metrics.average_cpc, metrics.cost_micros FROM campaign WHERE segments.date DURING LAST_7_DAYS
+    """
+    records_jsonpath = "$.results[*]"
+    name = "campaign_performance"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "campaign_performance.json"
