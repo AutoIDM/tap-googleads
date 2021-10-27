@@ -5,7 +5,6 @@ from typing import List
 from singer_sdk import Tap, Stream
 from singer_sdk import typing as th  # JSON schema typing helpers
 
-# TODO: Import your custom stream types here:
 from tap_googleads.streams import (
     CustomerStream,
     CampaignsStream,
@@ -13,9 +12,13 @@ from tap_googleads.streams import (
     AdGroupsPerformance,
     AccessibleCustomers,
     CustomerHierarchyStream,
+    CampaignPerformance,
+    CampaignPerformanceByAgeRangeAndDevice,
+    CampaignPerformanceByGenderAndDevice,
+    CampaignPerformanceByLocation,
+    GeotargetsInUSA,
 )
-# TODO: Compile a list of custom stream types here
-#       OR rewrite discover_streams() below with your custom logic.
+
 STREAM_TYPES = [
     CustomerStream,
     CampaignsStream,
@@ -23,6 +26,11 @@ STREAM_TYPES = [
     AdGroupsPerformance,
     AccessibleCustomers,
     CustomerHierarchyStream,
+    CampaignPerformance,
+    CampaignPerformanceByAgeRangeAndDevice,
+    CampaignPerformanceByGenderAndDevice,
+    CampaignPerformanceByLocation,
+    GeotargetsInUSA,
 ]
 
 
