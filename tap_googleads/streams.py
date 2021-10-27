@@ -248,3 +248,27 @@ class CampaignPerformanceByGenderAndDevice(ReportsStream):
     primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_gender_and_device.json"
+
+class CampaignPerformanceByLocation(ReportsStream):
+    """Campaign Performance By Age Range and Device"""
+
+    gaql = """
+    SELECT campaign_criterion.location.geo_target_constant, campaign.name, campaign_criterion.bid_modifier, segments.date, metrics.clicks, metrics.impressions, metrics.ctr, metrics.average_cpc, metrics.cost_micros FROM location_view WHERE segments.date DURING LAST_7_DAYS AND campaign_criterion.status != 'REMOVED'
+    """
+    records_jsonpath = "$.results[*]"
+    name = "campaign_performance_by_location"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "campaign_performance_by_location.json"
+
+class GeotargetsInUSA(ReportsStream):
+    """Campaign Performance By Age Range and Device"""
+
+    gaql = """
+    SELECT geo_target_constant.canonical_name, geo_target_constant.country_code, geo_target_constant.id, geo_target_constant.name, geo_target_constant.status, geo_target_constant.target_type FROM geo_target_constant WHERE  geo_target_constant.country_code = "US"
+    """
+    records_jsonpath = "$.results[*]"
+    name = "geo_target_in_usa"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "geo_target_in_usa.json"
