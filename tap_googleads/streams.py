@@ -236,3 +236,15 @@ class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
     primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_age_range_and_device.json"
+
+class CampaignPerformanceByGenderAndDevice(ReportsStream):
+    """Campaign Performance By Age Range and Device"""
+
+    gaql = """
+    SELECT ad_group_criterion.gender.type, campaign.name, campaign.status, ad_group.name, segments.date, segments.device, ad_group_criterion.system_serving_status, ad_group_criterion.bid_modifier, metrics.clicks, metrics.impressions, metrics.ctr, metrics.average_cpc, metrics.cost_micros, campaign.advertising_channel_type FROM gender_view WHERE segments.date DURING LAST_7_DAYS
+    """
+    records_jsonpath = "$.results[*]"
+    name = "campaign_performance_by_gender_and_device"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "campaign_performance_by_gender_and_device.json"
