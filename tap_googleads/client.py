@@ -21,7 +21,8 @@ class GoogleAdsStream(RESTStream):
     url_base = "https://googleads.googleapis.com/v8"
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
-    next_page_token_jsonpath = "$.pageToken"  # Or override `get_next_page_token`.
+    next_page_token_jsonpath = "$.nextPageToken"  # Or override `get_next_page_token`.
+    _LOG_REQUEST_METRIC_URLS: bool = True 
 
     @property
     @cached
@@ -62,7 +63,7 @@ class GoogleAdsStream(RESTStream):
             first_match = next(iter(all_matches), None)
             next_page_token = first_match
         else:
-            next_page_token = response.headers.get("X-Next-Page", None)
+            next_page_token = None
 
         return next_page_token
 
@@ -72,7 +73,7 @@ class GoogleAdsStream(RESTStream):
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
         if next_page_token:
-            params["page"] = next_page_token
+            params["pageToken"] = next_page_token
         if self.replication_key:
             params["sort"] = "asc"
             params["order_by"] = self.replication_key
