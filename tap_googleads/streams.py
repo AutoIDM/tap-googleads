@@ -25,8 +25,113 @@ class CustomerStream(GoogleAdsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "customer.json"
 
+class AccessibleCustomers(GoogleAdsStream):
+    """Accessible Customers"""
+    path="/customers:listAccessibleCustomers"
+    name = "accessible_customers"
+    primary_keys = None
+    replication_key = None
+    #TODO add an assert for one record
+#    schema_filepath = SCHEMAS_DIR / "customer.json"
+    schema = th.PropertiesList(
+            th.Property("resourceNames", th.ArrayType(th.StringType))
+            ).to_dict()
+
+    def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
+        """Return a context dictionary for child streams."""
+        return { "resourceNames":record["resourceNames"] }
+
+class CustomerHierarchyStream(GoogleAdsStream):
+    """
+    Customer Hierarchy, inspiration from Google here 
+    https://developers.google.com/google-ads/api/docs/account-management/get-account-hierarchy.
+
+    This stream is stictly to be the Parent Stream, to let all Child Streams
+    know when to query the down stream apps.
+
+    """
+    
+    #TODO add a seperate stream to get the Customer information and return i
+    rest_method = "POST"
+    @property
+    def path(self):
+        #Paramas
+        path = "/customers/{client_id}"
+        path = path + "/googleAds:search"
+        path = path + "?pageSize=10000"
+        path = path + f"&query={self.gaql}"
+        return path
+    
+    @property
+    def gaql(self):
+        return """
+	SELECT
+          customer_client.client_customer,
+          customer_client.level,
+          customer_client.manager,
+          customer_client.descriptive_name,
+          customer_client.currency_code,
+          customer_client.time_zone,
+          customer_client.id
+        FROM customer_client
+        WHERE customer_client.level <= 1
+	"""
+    records_jsonpath = "$.results[*]"
+    name = "customer_hierarchystream"
+    primary_keys = ["customer_client.id"]
+    replication_key = None
+    parent_stream_type = AccessibleCustomers
+    #schema_filepath = SCHEMAS_DIR / "campaign.json"
+    schema = th.PropertiesList(
+            th.Property("customerClient",th.ObjectType(
+                th.Property("resourceName", th.StringType),
+                th.Property("clientCustomer", th.StringType),
+                th.Property("level", th.StringType),
+                th.Property("timeZone", th.StringType),
+                th.Property("manager", th.BooleanType),
+                th.Property("descriptiveName", th.StringType),
+                th.Property("currencyCode", th.StringType),
+                th.Property("id", th.StringType),
+            ))
+            ).to_dict()
+    
+
+    #Goal of this stream is to send to children stream a dict of
+    #login-customer-id:customer-id to query for all queries downstream
+    def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, Any]]:
+        """Return a generator of row-type dictionary objects.
+
+        Each row emitted should be a dictionary of property names to their values.
+
+        Args:
+            context: Stream partition or context dictionary.
+
+        Yields:
+            One item per (possibly processed) record in the API.
+        """
+        client_ids=[]
+        if (self.config["login_customer_id"]): 
+            client_ids = [self.config["login_customer_id"]]
+        else:
+            #TODO when implementing this the headers need to be set properly
+            client_ids = context["resourceNames"]
+
+        for client in client_ids:
+            client_id = client.split("/")[-1]
+            context["client_id"]=client_id
+            for row in self.request_records(context):
+                row = self.post_process(row, context)
+                #Don't search Manager accounts as we can't query them for everything
+                if (row["customerClient"]["manager"] == True): continue
+                yield row
+    
+    def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
+        """Return a context dictionary for child streams."""
+        return { "client_id":record["customerClient"]["id"] }
+
 class ReportsStream(GoogleAdsStream):
     rest_method = "POST"
+    parent_stream_type = CustomerHierarchyStream
     @property
     def gaql(self):
         raise NotImplementedError
@@ -34,13 +139,12 @@ class ReportsStream(GoogleAdsStream):
     @property
     def path(self):
         #Paramas
-        path = "/customers/"+self.config["customer_id"]
+        path = "/customers/{client_id}"
         path = path + "/googleAds:search"
         path = path + "?pageSize=10000"
         path = path + f"&query={self.gaql}"
         return path
     
-
 class CampaignsStream(ReportsStream):
     """Define custom stream."""
     @property

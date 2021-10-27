@@ -11,6 +11,8 @@ from tap_googleads.streams import (
     CampaignsStream,
     AdGroupsStream,
     AdGroupsPerformance,
+    AccessibleCustomers,
+    CustomerHierarchyStream,
 )
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
@@ -19,6 +21,8 @@ STREAM_TYPES = [
     CampaignsStream,
     AdGroupsStream,
     AdGroupsPerformance,
+    AccessibleCustomers,
+    CustomerHierarchyStream,
 ]
 
 
