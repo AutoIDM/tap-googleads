@@ -88,7 +88,7 @@ class CustomerHierarchyStream(GoogleAdsStream):
                 th.Property("clientCustomer", th.StringType),
                 th.Property("level", th.StringType),
                 th.Property("timeZone", th.StringType),
-                th.Property("manager", th.StringType),
+                th.Property("manager", th.BooleanType),
                 th.Property("descriptiveName", th.StringType),
                 th.Property("currencyCode", th.StringType),
                 th.Property("id", th.StringType),
