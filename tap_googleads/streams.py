@@ -129,6 +129,29 @@ class CustomerHierarchyStream(GoogleAdsStream):
         """Return a context dictionary for child streams."""
         return { "client_id":record["customerClient"]["id"] }
 
+class GeotargetsInUSA(GoogleAdsStream):
+    """Geotargets, worldwide, constant across all customers"""
+    rest_method = "POST"
+    
+    @property
+    def path(self):
+        #Paramas
+        path = "/customers/{login_customer_id}"
+        path = path + "/googleAds:search"
+        path = path + "?pageSize=10000"
+        path = path + f"&query={self.gaql}"
+        return path
+
+    gaql = """
+    SELECT geo_target_constant.canonical_name, geo_target_constant.country_code, geo_target_constant.id, geo_target_constant.name, geo_target_constant.status, geo_target_constant.target_type FROM geo_target_constant
+    """
+    records_jsonpath = "$.results[*]"
+    name = "geo_target_in_usa"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "geo_target_in_usa.json"
+    parent_stream_type = None #Override ReportsStream default as this is a constant
+
 class ReportsStream(GoogleAdsStream):
     rest_method = "POST"
     parent_stream_type = CustomerHierarchyStream
@@ -261,14 +284,3 @@ class CampaignPerformanceByLocation(ReportsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_location.json"
 
-class GeotargetsInUSA(ReportsStream):
-    """Campaign Performance By Age Range and Device"""
-
-    gaql = """
-    SELECT geo_target_constant.canonical_name, geo_target_constant.country_code, geo_target_constant.id, geo_target_constant.name, geo_target_constant.status, geo_target_constant.target_type FROM geo_target_constant WHERE  geo_target_constant.country_code = "US"
-    """
-    records_jsonpath = "$.results[*]"
-    name = "geo_target_in_usa"
-    primary_keys = ["id"]
-    replication_key = None
-    schema_filepath = SCHEMAS_DIR / "geo_target_in_usa.json"
