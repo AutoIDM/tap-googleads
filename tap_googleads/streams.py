@@ -129,7 +129,7 @@ class CustomerHierarchyStream(GoogleAdsStream):
         """Return a context dictionary for child streams."""
         return { "client_id":record["customerClient"]["id"] }
 
-class GeotargetsInUSA(GoogleAdsStream):
+class GeotargetsStream(GoogleAdsStream):
     """Geotargets, worldwide, constant across all customers"""
     rest_method = "POST"
     
@@ -146,10 +146,10 @@ class GeotargetsInUSA(GoogleAdsStream):
     SELECT geo_target_constant.canonical_name, geo_target_constant.country_code, geo_target_constant.id, geo_target_constant.name, geo_target_constant.status, geo_target_constant.target_type FROM geo_target_constant
     """
     records_jsonpath = "$.results[*]"
-    name = "geo_target_in_usa"
+    name = "geo_target_constant"
     primary_keys = ["id"]
     replication_key = None
-    schema_filepath = SCHEMAS_DIR / "geo_target_in_usa.json"
+    schema_filepath = SCHEMAS_DIR / "geo_target_constant.json"
     parent_stream_type = None #Override ReportsStream default as this is a constant
 
 class ReportsStream(GoogleAdsStream):
