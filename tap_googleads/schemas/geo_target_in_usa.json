@@ -1,9 +1,6 @@
 {
                 "type": "object",
                 "properties": {
-                "customer_id": {
-                    "type": "string"
-                },
                     "geoTargetConstant": {
                         "type": "object",
                         "properties": {
