@@ -1,3 +1,5 @@
+"""Tests the tap using a mock proxy oauth config."""
+
 import unittest
 import responses
 import singer
@@ -69,7 +71,7 @@ class TestTapGoogleadsWithProxyOAuthCredentials(unittest.TestCase):
 
         tap.sync_all()
 
-        # Assert first oauth token call is using pre set refresh_proxy_url_auth "Bearer proxy_url_token"
+        # Assert first oauth token call is using pre set refresh_proxy_url_auth
 
         oauth_refresh_request_token = responses.calls[0].request.headers[
             "Authorization"

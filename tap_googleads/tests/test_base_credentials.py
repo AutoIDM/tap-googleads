@@ -1,3 +1,5 @@
+"""Tests the tap using a mock base credentials config."""
+
 import unittest
 import responses
 import singer
@@ -50,7 +52,8 @@ class TestTapGoogleadsWithBaseCredentials(unittest.TestCase):
 
         responses.add(
             responses.POST,
-            "https://www.googleapis.com/oauth2/v4/token?refresh_token=1234&client_id=1234&client_secret=1234&grant_type=refresh_token",
+            "https://www.googleapis.com/oauth2/v4/token?refresh_token=1234&client_id=1234"
+            + "&client_secret=1234&grant_type=refresh_token",
             json={"access_token": 12341234, "expires_in": 3622},
             status=200,
         )

@@ -5,7 +5,7 @@ plugins:
   extractors:
   - name: tap-googleads
     namespace: tap_googleads
-    pip_url: /home/dw/Documents/matatika/dan-stuff/tap-googleads
+    executable: ./tap-googleads.sh
     capabilities:
     - state
     - catalog
@@ -25,17 +25,17 @@ plugins:
       kind: password
     - name: start_date
     - name: oauth_credentials.client_id
+      env_aliases:
+      - OAUTH_REFRESH_CLIENT_ID
       kind: hidden
       label: Optional - OAuth Client ID for use with a proxy refresh server
       required: false
-      env_aliases:
-        - OAUTH_REFRESH_CLIENT_ID
     - name: oauth_credentials.client_secret
+      env_aliases:
+      - OAUTH_REFRESH_CLIENT_SECRET
       kind: hidden
       label: Optional - OAuth Client Secret for use with a proxy refresh server
       required: false
-      env_aliases:
-        - OAUTH_REFRESH_CLIENT_SECRET
     - name: oauth_credentials.authorization_url
       kind: hidden
       value: https://oauth2.googleapis.com/token
@@ -47,23 +47,23 @@ plugins:
       label: Optional - OAuth Scope for use with a proxy refresh server
       required: false
     - name: oauth_credentials.access_token
-      kind: hidden
-      label: Access Token
-      required: false
       env_aliases:
-        - OAUTH_CREDENTIALS_ACCESS_TOKEN
+      - OAUTH_CREDENTIALS_ACCESS_TOKEN
+      kind: hidden
+      label: Optional - OAuth Access Token for use with a proxy refresh server
+      required: false
     - name: oauth_credentials.refresh_token
-      kind: hidden
-      label: OAuth Refresh Token
-      required: false
       env_aliases:
-        - OAUTH_CREDENTIALS_REFRESH_TOKEN
+      - OAUTH_CREDENTIALS_REFRESH_TOKEN
+      kind: hidden
+      label: Optional - OAuth Refresh Token for use with a proxy refresh server
+      required: false
     - name: oauth_credentials.refresh_proxy_url
-      kind: hidden
-      label: Optional - will be called with 'oauth_credentials.refresh_token' to refresh the access token via proxy refresh server
-      required: false
       env_aliases:
-        - OAUTH_CREDENTIALS_REFRESH_PROXY_URL
+      - OAUTH_CREDENTIALS_REFRESH_PROXY_URL
+      kind: hidden
+      label: Optional - OAuth Refresh Proxy URL is the URL for your proxy refresh server
+      required: false
     config:
       start_date: '2010-01-01T00:00:00Z'
   loaders:
