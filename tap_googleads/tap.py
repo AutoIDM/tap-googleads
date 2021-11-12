@@ -36,6 +36,7 @@ STREAM_TYPES = [
 
 class TapGoogleAds(Tap):
     """GoogleAds tap class."""
+
     name = "tap-googleads"
 
     # TODO: Add Descriptions
@@ -43,32 +44,32 @@ class TapGoogleAds(Tap):
         th.Property(
             "client_id",
             th.StringType,
-            required=True,
+            required=False,
         ),
         th.Property(
             "client_secret",
             th.StringType,
-            required=True,
+            required=False,
         ),
         th.Property(
             "developer_token",
             th.StringType,
-            required=True,
+            required=False,
         ),
         th.Property(
             "refresh_token",
             th.StringType,
-            required=True,
+            required=False,
         ),
         th.Property(
             "customer_id",
             th.StringType,
-            required=True,
+            required=False,
         ),
         th.Property(
             "login_customer_id",
             th.StringType,
-            required=True,
+            required=False,
         ),
     ).to_dict()
 
