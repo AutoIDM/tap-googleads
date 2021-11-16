@@ -44,32 +44,26 @@ class TapGoogleAds(Tap):
         th.Property(
             "client_id",
             th.StringType,
-            required=False,
         ),
         th.Property(
             "client_secret",
             th.StringType,
-            required=False,
         ),
         th.Property(
             "developer_token",
             th.StringType,
-            required=False,
         ),
         th.Property(
             "refresh_token",
             th.StringType,
-            required=False,
         ),
         th.Property(
             "customer_id",
             th.StringType,
-            required=False,
         ),
         th.Property(
             "login_customer_id",
             th.StringType,
-            required=False,
         ),
     ).to_dict()
 

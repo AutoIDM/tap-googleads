@@ -9,6 +9,7 @@ from memoization import cached
 
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from singer_sdk.authenticators import OAuthAuthenticator
 
 from tap_googleads.auth import GoogleAdsAuthenticator, ProxyGoogleAdsAuthenticator
 
@@ -29,7 +30,7 @@ class GoogleAdsStream(RESTStream):
 
     @property
     @cached
-    def authenticator(self) -> GoogleAdsAuthenticator:
+    def authenticator(self) -> OAuthAuthenticator:
         """Return a new authenticator object."""
         base_auth_url = "https://www.googleapis.com/oauth2/v4/token"
         # Silly way to do parameters but it works
@@ -40,31 +41,27 @@ class GoogleAdsStream(RESTStream):
         auth_url = auth_url + f"&client_secret={self.config.get('client_secret')}"
         auth_url = auth_url + "&grant_type=refresh_token"
 
-        if self.config.get("oauth_credentials", {}).get("refresh_proxy_url") is None:
+        oauth_credentials = self.config.get("oauth_credentials", {})
+
+        if not oauth_credentials:
             return GoogleAdsAuthenticator(stream=self, auth_endpoint=auth_url)
-        else:
-            auth_body = {}
-            auth_body["refresh_token"] = self.config.get("oauth_credentials", {}).get(
-                "refresh_token", None
-            )
-            auth_body["grant_type"] = "refresh_token"
 
-            auth_headers = {}
+        auth_body = {}
+        auth_headers = {}
 
-            auth_headers["authorization"] = self.config.get(
-                "oauth_credentials", {}
-            ).get("refresh_proxy_url_auth")
-            auth_headers["Content-Type"] = "application/json"
-            auth_headers["Accept"] = "application/json"
+        auth_body["refresh_token"] = oauth_credentials.get("refresh_token")
+        auth_body["grant_type"] = "refresh_token"
 
-            return ProxyGoogleAdsAuthenticator(
-                stream=self,
-                auth_endpoint=self.config.get("oauth_credentials", {}).get(
-                    "refresh_proxy_url"
-                ),
-                auth_body=auth_body,
-                auth_headers=auth_headers,
-            )
+        auth_headers["authorization"] = oauth_credentials.get("refresh_proxy_url_auth")
+        auth_headers["Content-Type"] = "application/json"
+        auth_headers["Accept"] = "application/json"
+
+        return ProxyGoogleAdsAuthenticator(
+            stream=self,
+            auth_endpoint=oauth_credentials.get("refresh_proxy_url"),
+            auth_body=auth_body,
+            auth_headers=auth_headers,
+        )
 
     @property
     def http_headers(self) -> dict:
