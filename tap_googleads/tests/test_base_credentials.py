@@ -8,16 +8,6 @@ from tap_googleads.tap import TapGoogleAds
 
 import tap_googleads.tests.utils as test_utils
 
-SINGER_MESSAGES = []
-
-
-def accumulate_singer_messages(message):
-    """function to collect singer library write_message in tests"""
-    SINGER_MESSAGES.append(message)
-
-
-singer.write_message = accumulate_singer_messages
-
 
 class TestTapGoogleadsWithBaseCredentials(unittest.TestCase):
     """Test class for tap-googleads using base credentials"""
@@ -32,7 +22,9 @@ class TestTapGoogleadsWithBaseCredentials(unittest.TestCase):
             "developer_token": "1234",
         }
         responses.reset()
-        del SINGER_MESSAGES[:]
+        del test_utils.SINGER_MESSAGES[:]
+
+        singer.write_message = test_utils.accumulate_singer_messages
 
     def test_base_credentials_discovery(self):
         """Test basic discover sync with Bearer Token"""
@@ -67,7 +59,7 @@ class TestTapGoogleadsWithBaseCredentials(unittest.TestCase):
 
         tap.sync_all()
 
-        self.assertEqual(len(SINGER_MESSAGES), 3)
-        self.assertIsInstance(SINGER_MESSAGES[0], singer.SchemaMessage)
-        self.assertIsInstance(SINGER_MESSAGES[1], singer.RecordMessage)
-        self.assertIsInstance(SINGER_MESSAGES[2], singer.StateMessage)
+        self.assertEqual(len(test_utils.SINGER_MESSAGES), 3)
+        self.assertIsInstance(test_utils.SINGER_MESSAGES[0], singer.SchemaMessage)
+        self.assertIsInstance(test_utils.SINGER_MESSAGES[1], singer.RecordMessage)
+        self.assertIsInstance(test_utils.SINGER_MESSAGES[2], singer.StateMessage)
