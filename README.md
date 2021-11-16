@@ -47,7 +47,7 @@ tap-googleads --about
 ### Getting A Refresh Token
 1. GET https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=client_id&redirect_uri=http://127.0.0.1&scope=https://www.googleapis.com/auth/adwords&state=autoidm&access_type=offline&prompt=select_account&include_granted_scopes=true
 1. POST https://www.googleapis.com/oauth2/v4/token?code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri=http://127.0.0.1&grant_type=authorization_code
-1. POST https://www.googleapis.com/oauth2/v4/token?refresh_token={refres_token}&client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token
+1. POST https://www.googleapis.com/oauth2/v4/token?refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}&grant_type=refresh_token
 
 
 ### Proxy OAuth Credentials
