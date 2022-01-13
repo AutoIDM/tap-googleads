@@ -8,6 +8,7 @@ from memoization import cached
 
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 
 from tap_googleads.auth import GoogleAdsAuthenticator
 
@@ -78,6 +79,54 @@ class GoogleAdsStream(RESTStream):
             params["sort"] = "asc"
             params["order_by"] = self.replication_key
         return params
+    
+    def validate_response(self, response):
+        # Still catch error status codes
+        if response.status_code == 403:
+            msg = (
+                f"{response.status_code} Client Error: "
+                f"{response.reason} for url: {response.url}"
+            )
+            data = response.json()
+            details: dict = data.get("error").get("details")
+            
+            if details and details[0]["errors"][0]["errorCode"]["authorizationError"] == "CUSTOMER_NOT_ENABLED":
+                raise CustomerNotEnabledError(msg)
+            
+        if 400 <= response.status_code < 500:
+            msg = (
+                f"{response.status_code} Client Error: "
+                f"{response.reason} for path: {self.path}"
+            )
+            raise FatalAPIError(msg)
+
+        elif 500 <= response.status_code < 600:
+            msg = (
+                f"{response.status_code} Server Error: "
+                f"{response.reason} for path: {self.path}"
+            )
+            raise RetriableAPIError(msg)
+    
+    def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, Any]]:
+        """Return a generator of row-type dictionary objects.
+
+        Each row emitted should be a dictionary of property names to their values.
+
+        Args:
+            context: Stream partition or context dictionary.
+
+        Yields:
+            One item per (possibly processed) record in the API.
+        """
+        try:
+            for record in self.request_records(context):
+                transformed_record = self.post_process(record, context)
+                if transformed_record is None:
+                    # Record filtered out during post_process()
+                    continue
+                yield transformed_record
+        except CustomerNotEnabledError as e:
+            self.logger.warning(e)  
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -98,3 +147,10 @@ class GoogleAdsStream(RESTStream):
         """As needed, append or transform raw data to match expected structure."""
         # TODO: Delete this method if not needed.
         return row
+
+
+class CustomerNotEnabledError(Exception):
+    """
+	Customer Not Enabled, sometimes googles cache gives us customers that 
+	are not enabled.
+	"""
