@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry==1.1.12
           poetry install
-      - name: Test tap-clickup 
+      - name: Test tap-googleads
         run: poetry run tox
         env:
           TAP_GOOGLEADS_CLIENT_ID: ${{ secrets.TAP_GOOGLEADS_CLIENT_ID }}
