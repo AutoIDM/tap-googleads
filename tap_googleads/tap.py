@@ -36,6 +36,7 @@ STREAM_TYPES = [
 
 class TapGoogleAds(Tap):
     """GoogleAds tap class."""
+
     name = "tap-googleads"
 
     # TODO: Add Descriptions

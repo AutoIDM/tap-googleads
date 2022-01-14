@@ -1,4 +1,4 @@
-# tap-googleads
+# ` tap-googleads` ![Build and Tests](https://github.com/AutoIDM/tap-googleads/actions/workflows/ci.yml/badge.svg?branch=main) [![PyPI download month](https://img.shields.io/pypi/dm/tap-googleads.svg)](https://pypi.python.org/pypi/tap-googleads/) 
 
 `tap-googleads` is a Singer tap for GoogleAds.
 
