@@ -81,8 +81,9 @@ def test_customer_not_enabled(mocked_responses):
         status=200,
         content_type="application/json",
     )
+    # Don't need ENV variables here
     tap: Tap = tap_googleads.tap.TapGoogleAds(
-        config=SAMPLE_CONFIG, parse_env_config=True
+        config=SAMPLE_CONFIG, parse_env_config=False
     )
     campaign_stream: Stream = tap.streams["campaign"]
     context = {"client_id": "12345"}
