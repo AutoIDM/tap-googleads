@@ -1,0 +1,59 @@
+{
+    "type": "object",
+    "properties": {
+        "campaign": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "metrics": {
+            "type": "object",
+            "properties": {
+                "conversions": {
+                    "type": "number"
+                }
+            }
+        },
+        "campaignCriterion": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "object",
+                    "properties": {
+                        "geoTargetConstant": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "segments": {
+            "type": "object",
+            "properties": {
+                "conversionActionCategory": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "locationView": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
