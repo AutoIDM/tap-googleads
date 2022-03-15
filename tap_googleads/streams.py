@@ -307,3 +307,15 @@ class CampaignPerformanceByLocation(ReportsStream):
     primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_location.json"
+
+class ConversionsByLocation(ReportsStream):
+    """Conversions By Location"""
+
+    gaql = """
+    SELECT campaign_criterion.location.geo_target_constant, campaign.name, campaign_criterion.bid_modifier, segments.date, segments.conversion_action_category, metrics.conversions FROM location_view WHERE segments.date DURING LAST_7_DAYS AND campaign_criterion.status != 'REMOVED'
+    """
+    records_jsonpath = "$.results[*]"
+    name = "conversion_by_location"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "conversion_by_location.json"
