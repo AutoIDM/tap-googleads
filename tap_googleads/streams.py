@@ -308,6 +308,7 @@ class CampaignPerformanceByLocation(ReportsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_location.json"
 
+
 class ConversionsByLocation(ReportsStream):
     """Conversions By Location"""
 
