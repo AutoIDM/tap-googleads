@@ -14,6 +14,27 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 #       - Copy-paste as many times as needed to create multiple stream types.
 
 
+def flatten(row: dict, keys_w_prefix=None, keys_no_prefix=None) -> dict:
+    """Flatten one level for typical Google Ads row."""
+    keys_w_prefix = keys_w_prefix if keys_w_prefix else []
+    keys_no_prefix = keys_no_prefix if keys_no_prefix else []
+
+    new_row = {}
+    for prefix in keys_w_prefix:
+        subitem = row.pop(prefix)
+        for k, v in subitem.items():
+            new_row[f"{prefix}_{k}"] = v
+
+    for key in keys_no_prefix:
+        subitem = row.pop(key)
+        new_row.update(subitem)
+
+    new_row.update(row)
+    return new_row
+
+
+
+
 class CustomerStream(GoogleAdsStream):
     """Define custom stream."""
 
@@ -70,39 +91,37 @@ class CustomerHierarchyStream(GoogleAdsStream):
     @property
     def gaql(self):
         return """
-	SELECT
-          customer_client.client_customer,
-          customer_client.level,
-          customer_client.manager,
-          customer_client.descriptive_name,
-          customer_client.currency_code,
-          customer_client.time_zone,
-          customer_client.id
-        FROM customer_client
-        WHERE customer_client.level <= 1
-	"""
+	        SELECT customer_client.client_customer
+                 , customer_client.level
+                 , customer_client.manager
+                 , customer_client.descriptive_name
+                 , customer_client.currency_code
+                 , customer_client.time_zone
+                 , customer_client.id
+            FROM customer_client
+            WHERE customer_client.level <= 1
+	    """
 
     records_jsonpath = "$.results[*]"
     name = "customer_hierarchystream"
-    primary_keys = []
+    primary_keys = ["id"]
     replication_key = None
     parent_stream_type = AccessibleCustomers
     # schema_filepath = SCHEMAS_DIR / "campaign.json"
     schema = th.PropertiesList(
-        th.Property(
-            "customerClient",
-            th.ObjectType(
-                th.Property("resourceName", th.StringType),
-                th.Property("clientCustomer", th.StringType),
-                th.Property("level", th.StringType),
-                th.Property("timeZone", th.StringType),
-                th.Property("manager", th.BooleanType),
-                th.Property("descriptiveName", th.StringType),
-                th.Property("currencyCode", th.StringType),
-                th.Property("id", th.StringType),
-            ),
-        )
+        th.Property("resourceName", th.StringType),
+        th.Property("clientCustomer", th.StringType),
+        th.Property("level", th.StringType),
+        th.Property("timeZone", th.StringType),
+        th.Property("manager", th.BooleanType),
+        th.Property("descriptiveName", th.StringType),
+        th.Property("currencyCode", th.StringType),
+        th.Property("id", th.StringType),
     ).to_dict()
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        return row["customerClient"]
 
     # Goal of this stream is to send to children stream a dict of
     # login-customer-id:customer-id to query for all queries downstream
@@ -130,13 +149,13 @@ class CustomerHierarchyStream(GoogleAdsStream):
             for row in self.request_records(context):
                 row = self.post_process(row, context)
                 # Don't search Manager accounts as we can't query them for everything
-                if row["customerClient"]["manager"] == True:
+                if row["manager"] == True:
                     continue
                 yield row
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         """Return a context dictionary for child streams."""
-        return {"client_id": record["customerClient"]["id"]}
+        return {"client_id": record["id"]}
 
 
 class GeotargetsStream(GoogleAdsStream):
@@ -154,7 +173,13 @@ class GeotargetsStream(GoogleAdsStream):
         return path
 
     gaql = """
-    SELECT geo_target_constant.canonical_name, geo_target_constant.country_code, geo_target_constant.id, geo_target_constant.name, geo_target_constant.status, geo_target_constant.target_type FROM geo_target_constant
+        SELECT geo_target_constant.canonical_name
+             , geo_target_constant.country_code
+             , geo_target_constant.id
+             , geo_target_constant.name
+             , geo_target_constant.status
+             , geo_target_constant.target_type 
+        FROM geo_target_constant
     """
     records_jsonpath = "$.results[*]"
     name = "geo_target_constant"
@@ -162,6 +187,10 @@ class GeotargetsStream(GoogleAdsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "geo_target_constant.json"
     parent_stream_type = None  # Override ReportsStream default as this is a constant
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        return row["geoTargetConstant"]
 
 
 class ReportsStream(GoogleAdsStream):
@@ -188,7 +217,10 @@ class CampaignsStream(ReportsStream):
     @property
     def gaql(self):
         return """
-        SELECT campaign.id, campaign.name FROM campaign ORDER BY campaign.id
+            SELECT campaign.id
+                 , campaign.name 
+            FROM campaign 
+            ORDER BY campaign.id
         """
 
     records_jsonpath = "$.results[*]"
@@ -197,6 +229,10 @@ class CampaignsStream(ReportsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign.json"
 
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        return flatten(row, keys_no_prefix=['campaign'])
+
 
 class AdGroupsStream(ReportsStream):
     """Define custom stream."""
@@ -204,35 +240,35 @@ class AdGroupsStream(ReportsStream):
     @property
     def gaql(self):
         return """
-       SELECT ad_group.url_custom_parameters, 
-       ad_group.type, 
-       ad_group.tracking_url_template, 
-       ad_group.targeting_setting.target_restrictions,
-       ad_group.target_roas,
-       ad_group.target_cpm_micros,
-       ad_group.status,
-       ad_group.target_cpa_micros,
-       ad_group.resource_name,
-       ad_group.percent_cpc_bid_micros,
-       ad_group.name,
-       ad_group.labels,
-       ad_group.id,
-       ad_group.final_url_suffix,
-       ad_group.explorer_auto_optimizer_setting.opt_in,
-       ad_group.excluded_parent_asset_field_types,
-       ad_group.effective_target_roas_source,
-       ad_group.effective_target_roas,
-       ad_group.effective_target_cpa_source,
-       ad_group.effective_target_cpa_micros,
-       ad_group.display_custom_bid_dimension,
-       ad_group.cpv_bid_micros,
-       ad_group.cpm_bid_micros,
-       ad_group.cpc_bid_micros,
-       ad_group.campaign,
-       ad_group.base_ad_group,
-       ad_group.ad_rotation_mode
-       FROM ad_group 
-       """
+            SELECT ad_group.url_custom_parameters
+                 , ad_group.type
+                 , ad_group.tracking_url_template
+                 , ad_group.targeting_setting.target_restrictions
+                 , ad_group.target_roas
+                 , ad_group.target_cpm_micros
+                 , ad_group.status
+                 , ad_group.target_cpa_micros
+                 , ad_group.resource_name
+                 , ad_group.percent_cpc_bid_micros
+                 , ad_group.name
+                 , ad_group.labels
+                 , ad_group.id
+                 , ad_group.final_url_suffix
+                 , ad_group.explorer_auto_optimizer_setting.opt_in
+                 , ad_group.excluded_parent_asset_field_types
+                 , ad_group.effective_target_roas_source
+                 , ad_group.effective_target_roas
+                 , ad_group.effective_target_cpa_source
+                 , ad_group.effective_target_cpa_micros
+                 , ad_group.display_custom_bid_dimension
+                 , ad_group.cpv_bid_micros
+                 , ad_group.cpm_bid_micros
+                 , ad_group.cpc_bid_micros
+                 , ad_group.campaign
+                 , ad_group.base_ad_group
+                 , ad_group.ad_rotation_mode
+            FROM ad_group 
+        """
 
     records_jsonpath = "$.results[*]"
     name = "adgroups"
@@ -240,83 +276,218 @@ class AdGroupsStream(ReportsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "ad_group.json"
 
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        return row["adGroup"]
+
 
 class AdGroupsPerformance(ReportsStream):
     """AdGroups Performance"""
 
     gaql = """
-        SELECT campaign.id, ad_group.id, metrics.impressions, metrics.clicks,
-               metrics.cost_micros
-               FROM ad_group
-               WHERE segments.date DURING LAST_7_DAYS
-        """
+        SELECT campaign.id
+             , ad_group.id
+             , metrics.impressions
+             , metrics.clicks
+             , metrics.cost_micros
+             , segments.date
+        FROM ad_group
+        WHERE segments.date DURING LAST_7_DAYS
+    """
     records_jsonpath = "$.results[*]"
     name = "adgroupsperformance"
-    primary_keys = ["id"]
+    primary_keys = ["campaign_id", "adGroup_id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "adgroups_performance.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        return flatten(
+            row,
+            keys_w_prefix=["campaign", "adGroup"],
+            keys_no_prefix=["segments", "metrics"]
+        )
 
 
 class CampaignPerformance(ReportsStream):
     """Campaign Performance"""
 
     gaql = """
-    SELECT campaign.name, campaign.status, segments.device, segments.date, metrics.impressions, metrics.clicks, metrics.ctr, metrics.average_cpc, metrics.cost_micros FROM campaign WHERE segments.date DURING LAST_7_DAYS
+        SELECT 
+              campaign.id
+            , campaign.name
+            , campaign.status
+            , segments.device
+            , segments.date
+            , metrics.impressions
+            , metrics.clicks
+            , metrics.ctr
+            , metrics.average_cpc
+            , metrics.cost_micros 
+        FROM campaign 
+        WHERE segments.date DURING LAST_7_DAYS
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
-    primary_keys = ["id"]
+    primary_keys = ["id", "date"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        return flatten(row, keys_no_prefix=["campaign", "metrics", "segments"])
 
 
 class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
     gaql = """
-    SELECT ad_group_criterion.age_range.type, campaign.name, campaign.status, ad_group.name, segments.date, segments.device, ad_group_criterion.system_serving_status, ad_group_criterion.bid_modifier, metrics.clicks, metrics.impressions, metrics.ctr, metrics.average_cpc, metrics.cost_micros, campaign.advertising_channel_type FROM age_range_view WHERE segments.date DURING LAST_7_DAYS
+        SELECT ad_group_criterion.age_range.type
+             , campaign.name
+             , campaign.id
+             , campaign.status
+             , ad_group.name
+             , ad_group.id
+             , segments.date
+             , segments.device
+             , ad_group_criterion.system_serving_status
+             , ad_group_criterion.bid_modifier
+             , metrics.clicks
+             , metrics.impressions
+             , metrics.ctr
+             , metrics.average_cpc
+             , metrics.cost_micros
+             , campaign.advertising_channel_type 
+        FROM age_range_view 
+        WHERE segments.date DURING LAST_7_DAYS
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_performance_by_age_range_and_device"
-    primary_keys = ["id"]
+    primary_keys = ["campaign_id", "adGroup_id", "adGroupCriterion_ageRange_type", "device", "date"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_age_range_and_device.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        new_row = flatten(
+            row,
+            keys_w_prefix=["campaign", "adGroup", "adGroupCriterion", "ageRangeView"],
+            keys_no_prefix=["metrics", "segments"],
+        )
+        age_rage_type = new_row.pop("adGroupCriterion_ageRange")
+        new_row["adGroupCriterion_ageRange_type"] = age_rage_type["type"]
+        return new_row
 
 
 class CampaignPerformanceByGenderAndDevice(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
     gaql = """
-    SELECT ad_group_criterion.gender.type, campaign.name, campaign.status, ad_group.name, segments.date, segments.device, ad_group_criterion.system_serving_status, ad_group_criterion.bid_modifier, metrics.clicks, metrics.impressions, metrics.ctr, metrics.average_cpc, metrics.cost_micros, campaign.advertising_channel_type FROM gender_view WHERE segments.date DURING LAST_7_DAYS
+        SELECT ad_group_criterion.gender.type
+             , campaign.name
+             , campaign.status
+             , campaign.id
+             , ad_group.name
+             , ad_group.id
+             , segments.date
+             , segments.device
+             , ad_group_criterion.system_serving_status
+             , ad_group_criterion.bid_modifier
+             , metrics.clicks
+             , metrics.impressions
+             , metrics.ctr
+             , metrics.average_cpc
+             , metrics.cost_micros
+             , campaign.advertising_channel_type 
+        FROM gender_view 
+        WHERE segments.date DURING LAST_7_DAYS
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_performance_by_gender_and_device"
-    primary_keys = ["id"]
+    primary_keys = ["campaign_id", "adGroup_id", "adGroupCriterion_gender_type", "device", "date"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_gender_and_device.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        new_row = flatten(
+            row,
+            keys_w_prefix=["campaign", "adGroup", "adGroupCriterion", "genderView"],
+            keys_no_prefix=["metrics", "segments"],
+        )
+        return flatten(
+            new_row,
+            keys_w_prefix=["adGroupCriterion_gender"],
+        )
+
 
 
 class CampaignPerformanceByLocation(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
     gaql = """
-    SELECT campaign_criterion.location.geo_target_constant, campaign.name, campaign_criterion.bid_modifier, segments.date, metrics.clicks, metrics.impressions, metrics.ctr, metrics.average_cpc, metrics.cost_micros FROM location_view WHERE segments.date DURING LAST_7_DAYS AND campaign_criterion.status != 'REMOVED'
+        SELECT campaign_criterion.location.geo_target_constant
+             , campaign.name
+             , campaign.id
+             , campaign_criterion.bid_modifier
+             , segments.date
+             , metrics.clicks
+             , metrics.impressions
+             , metrics.ctr
+             , metrics.average_cpc
+             , metrics.cost_micros 
+        FROM location_view 
+        WHERE segments.date DURING LAST_7_DAYS 
+          AND campaign_criterion.status != 'REMOVED'
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_performance_by_location"
-    primary_keys = ["id"]
+    primary_keys = ["campaign_id", "date", "campaignCriterion_location_geoTargetConstant"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance_by_location.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        new_row = flatten(
+            row,
+            keys_w_prefix=["campaign", "campaignCriterion", "locationView"],
+            keys_no_prefix=["metrics", "segments"],
+        )
+        return flatten(
+            new_row,
+            keys_w_prefix=["campaignCriterion_location"],
+        )
 
 
 class ConversionsByLocation(ReportsStream):
     """Conversions By Location"""
 
     gaql = """
-    SELECT campaign_criterion.location.geo_target_constant, campaign.name, campaign_criterion.bid_modifier, segments.date, segments.conversion_action_category, metrics.conversions FROM location_view WHERE segments.date DURING LAST_7_DAYS AND campaign_criterion.status != 'REMOVED'
+        SELECT campaign_criterion.location.geo_target_constant
+             , campaign.name
+             , campaign.id
+             , campaign_criterion.bid_modifier
+             , segments.date
+             , segments.conversion_action_category
+             , metrics.conversions 
+        FROM location_view 
+        WHERE segments.date DURING LAST_7_DAYS 
+          AND campaign_criterion.status != 'REMOVED'
     """
     records_jsonpath = "$.results[*]"
     name = "conversion_by_location"
-    primary_keys = ["id"]
+    primary_keys = ["campaign_id", "date", "campaignCriterion_location_geoTargetConstant"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "conversion_by_location.json"
+
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        new_row = flatten(
+            row,
+            keys_w_prefix=["campaign", "campaignCriterion", "locationView"],
+            keys_no_prefix=["metrics", "segments"],
+        )
+        return flatten(
+            new_row,
+            keys_w_prefix=["campaignCriterion_location"],
+        )

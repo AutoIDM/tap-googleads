@@ -1,22 +1,17 @@
 {
     "type": "object",
     "properties": {
-                "customer_id": {
-                    "type": "string"
-                },
-        "campaign": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                }
-            }
+        "customer_id": {
+            "type": "string"
+        },
+        "resourceName": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
         }
     }
 }
