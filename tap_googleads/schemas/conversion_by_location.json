@@ -1,59 +1,32 @@
 {
     "type": "object",
     "properties": {
-        "campaign": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
+        "campaign_resourceName": {
+            "type": "string"
         },
-        "metrics": {
-            "type": "object",
-            "properties": {
-                "conversions": {
-                    "type": "number"
-                }
-            }
+        "campaign_name": {
+            "type": "string"
         },
-        "campaignCriterion": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "object",
-                    "properties": {
-                        "geoTargetConstant": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
+        "campaign_id": {
+            "type": "string"
         },
-        "segments": {
-            "type": "object",
-            "properties": {
-                "conversionActionCategory": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                }
-            }
+        "conversions": {
+            "type": "number"
         },
-        "locationView": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
-                    "type": "string"
-                }
-            }
+        "campaignCriterion_resourceName": {
+            "type": "string"
+        },
+        "campaignCriterion_location_geoTargetConstant": {
+            "type": "string"
+        },
+        "conversionActionCategory": {
+            "type": "string"
+        },
+        "date": {
+            "type": "string"
+        },
+        "locationView_resourceName": {
+            "type": "string"
         }
     }
 }

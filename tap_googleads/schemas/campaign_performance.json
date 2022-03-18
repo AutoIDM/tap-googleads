@@ -1,53 +1,41 @@
 {
-                "type": "object",
-                "properties": {
-                "customer_id": {
-                    "type": "string"
-                },
-                    "campaign": {
-                        "type": "object",
-                        "properties": {
-                            "resourceName": {
-                                "type": "string"
-                            },
-                            "status": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "metrics": {
-                        "type": "object",
-                        "properties": {
-                            "clicks": {
-                                "type": "string"
-                            },
-                            "costMicros": {
-                                "type": "string"
-                            },
-                            "ctr": {
-                                "type": "number"
-                            },
-                            "averageCpc": {
-                                "type": "number"
-                            },
-                            "impressions": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "segments": {
-                        "type": "object",
-                        "properties": {
-                            "device": {
-                                "type": "string"
-                            },
-                            "date": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
+    "type": "object",
+    "properties": {
+        "customer_id": {
+            "type": "string"
+        },
+        "resourceName": {
+            "type": "string"
+        },
+        "status": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
+        },
+        "clicks": {
+            "type": "string"
+        },
+        "costMicros": {
+            "type": "string"
+        },
+        "ctr": {
+            "type": "number"
+        },
+        "averageCpc": {
+            "type": "number"
+        },
+        "impressions": {
+            "type": "string"
+        },
+        "device": {
+            "type": "string"
+        },
+        "date": {
+            "type": "string"
+        }
+    }
 }

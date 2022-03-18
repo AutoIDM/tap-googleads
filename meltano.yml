@@ -27,6 +27,9 @@ plugins:
       value: '2010-01-01T00:00:00Z'
     config:
       start_date: '2010-01-01T00:00:00Z'
+    select:
+    - customer_hierarchystream.*
+    - conversion_by_location.*
   loaders:
   - name: target-jsonl
     variant: andyh1203
