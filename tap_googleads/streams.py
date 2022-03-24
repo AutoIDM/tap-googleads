@@ -278,7 +278,9 @@ class AdGroupsStream(ReportsStream):
 class AdGroupsPerformance(ReportsStream):
     """AdGroups Performance"""
 
-    gaql = """
+    @property
+    def gaql(self):
+        return f"""
         SELECT campaign.id
              , ad_group.id
              , metrics.impressions
@@ -286,7 +288,8 @@ class AdGroupsPerformance(ReportsStream):
              , metrics.cost_micros
              , segments.date
         FROM ad_group
-        WHERE segments.date DURING LAST_7_DAYS
+        WHERE segments.date BETWEEN '{self.config["start_date"]}' 
+                                AND '{self.config["end_date"]}'
     """
 
     records_jsonpath = "$.results[*]"
@@ -299,14 +302,6 @@ class AdGroupsPerformance(ReportsStream):
 
 class CampaignPerformance(ReportsStream):
     """Campaign Performance"""
-
-    @property
-    def start_date(self):
-        return self.config.get("start_date") or "2022-01-01"
-
-    @property
-    def end_date(self):
-        return self.config.get("end_date") or "2022-01-02"
 
     @property
     def gaql(self):
@@ -322,8 +317,10 @@ class CampaignPerformance(ReportsStream):
              , metrics.average_cpc
              , metrics.cost_micros 
         FROM campaign 
-        WHERE segments.date BETWEEN {self.start_date} AND {self.end_date}
+        WHERE segments.date BETWEEN '{self.config["start_date"]}' 
+                                AND '{self.config["end_date"]}'
     """
+
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
     primary_keys_jsonpaths = ["campaign.resourceName", "segments.date"]
@@ -335,7 +332,9 @@ class CampaignPerformance(ReportsStream):
 class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
-    gaql = """
+    @property
+    def gaql(self):
+        return f"""
         SELECT ad_group_criterion.age_range.type
              , campaign.name
              , campaign.id
@@ -353,7 +352,8 @@ class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
              , metrics.cost_micros
              , campaign.advertising_channel_type 
         FROM age_range_view 
-        WHERE segments.date DURING LAST_7_DAYS
+        WHERE segments.date BETWEEN '{self.config["start_date"]}' 
+                                AND '{self.config["end_date"]}'
     """
 
     records_jsonpath = "$.results[*]"
@@ -373,7 +373,9 @@ class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
 class CampaignPerformanceByGenderAndDevice(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
-    gaql = """
+    @property
+    def gaql(self):
+        return f"""
         SELECT ad_group_criterion.gender.type
              , campaign.name
              , campaign.status
@@ -391,7 +393,8 @@ class CampaignPerformanceByGenderAndDevice(ReportsStream):
              , metrics.cost_micros
              , campaign.advertising_channel_type 
         FROM gender_view 
-        WHERE segments.date DURING LAST_7_DAYS
+        WHERE segments.date BETWEEN '{self.config["start_date"]}' 
+                                AND '{self.config["end_date"]}'
     """
 
     records_jsonpath = "$.results[*]"
@@ -411,7 +414,9 @@ class CampaignPerformanceByGenderAndDevice(ReportsStream):
 class CampaignPerformanceByLocation(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
-    gaql = """
+    @property
+    def gaql(self):
+        return f"""
         SELECT campaign_criterion.location.geo_target_constant
              , campaign.name
              , campaign.id
@@ -423,7 +428,8 @@ class CampaignPerformanceByLocation(ReportsStream):
              , metrics.average_cpc
              , metrics.cost_micros 
         FROM location_view 
-        WHERE segments.date DURING LAST_7_DAYS 
+        WHERE segments.date BETWEEN '{self.config["start_date"]}' 
+                                AND '{self.config["end_date"]}'
           AND campaign_criterion.status != 'REMOVED'
     """
 
@@ -442,7 +448,9 @@ class CampaignPerformanceByLocation(ReportsStream):
 class ConversionsByLocation(ReportsStream):
     """Conversions By Location"""
 
-    gaql = """
+    @property
+    def gaql(self):
+        return f"""
        SELECT campaign_criterion.location.geo_target_constant
             , campaign.name
             , campaign.id
@@ -451,7 +459,8 @@ class ConversionsByLocation(ReportsStream):
             , segments.conversion_action_category
             , metrics.conversions 
         FROM location_view 
-        WHERE segments.date DURING LAST_7_DAYS 
+        WHERE segments.date BETWEEN '{self.config["start_date"]}' 
+                                AND '{self.config["end_date"]}'
           AND campaign_criterion.status != 'REMOVED'
     """
 
