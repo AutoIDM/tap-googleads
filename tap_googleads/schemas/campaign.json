@@ -1,9 +1,9 @@
 {
     "type": "object",
     "properties": {
-                "customer_id": {
-                    "type": "string"
-                },
+        "_sdc_primary_key": {
+            "type": "string"
+        },
         "campaign": {
             "type": "object",
             "properties": {

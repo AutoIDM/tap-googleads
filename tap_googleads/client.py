@@ -11,6 +11,7 @@ from singer_sdk.streams import RESTStream
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 
 from tap_googleads.auth import GoogleAdsAuthenticator
+from tap_googleads.utils import replicate_pk_at_root
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -23,6 +24,7 @@ class GoogleAdsStream(RESTStream):
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
     next_page_token_jsonpath = "$.nextPageToken"  # Or override `get_next_page_token`.
+    primary_keys_jsonpaths = None
     _LOG_REQUEST_METRIC_URLS: bool = True
 
     @property
@@ -144,10 +146,9 @@ class GoogleAdsStream(RESTStream):
         # TODO: Parse response body and return a set of records.
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         """As needed, append or transform raw data to match expected structure."""
-        # TODO: Delete this method if not needed.
-        return row
+        return replicate_pk_at_root(row, self.primary_keys_jsonpaths)
 
 
 class CustomerNotEnabledError(Exception):

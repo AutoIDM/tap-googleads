@@ -1,9 +1,6 @@
 {
     "type": "object",
     "properties": {
-                "customer_id": {
-                    "type": "string"
-                },
         "campaign": {
             "type": "object",
             "properties": {
@@ -39,6 +36,17 @@
                     "type": "string"
                 }
             }
+        },
+        "segments": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "_sdc_primary_key": {
+            "type": "string"
         }
     }
 }
