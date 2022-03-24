@@ -1,32 +1,59 @@
 {
     "type": "object",
     "properties": {
-        "campaign_resourceName": {
-            "type": "string"
+        "campaign": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
-        "campaign_name": {
-            "type": "string"
+        "metrics": {
+            "type": "object",
+            "properties": {
+                "conversions": {
+                    "type": "number"
+                }
+            }
         },
-        "campaign_id": {
-            "type": "string"
+        "campaignCriterion": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "object",
+                    "properties": {
+                        "geoTargetConstant": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         },
-        "conversions": {
-            "type": "number"
+        "segments": {
+            "type": "object",
+            "properties": {
+                "conversionActionCategory": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
         },
-        "campaignCriterion_resourceName": {
-            "type": "string"
-        },
-        "campaignCriterion_location_geoTargetConstant": {
-            "type": "string"
-        },
-        "conversionActionCategory": {
-            "type": "string"
-        },
-        "date": {
-            "type": "string"
-        },
-        "locationView_resourceName": {
-            "type": "string"
+        "locationView": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                }
+            }
         }
     }
 }
