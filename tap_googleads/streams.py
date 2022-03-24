@@ -300,7 +300,17 @@ class AdGroupsPerformance(ReportsStream):
 class CampaignPerformance(ReportsStream):
     """Campaign Performance"""
 
-    gaql = """
+    @property
+    def start_date(self):
+        return self.config.get("start_date") or "2022-01-01"
+
+    @property
+    def end_date(self):
+        return self.config.get("end_date") or "2022-01-02"
+
+    @property
+    def gaql(self):
+        return f"""
         SELECT campaign.id
              , campaign.name
              , campaign.status
@@ -312,7 +322,7 @@ class CampaignPerformance(ReportsStream):
              , metrics.average_cpc
              , metrics.cost_micros 
         FROM campaign 
-        WHERE segments.date DURING LAST_7_DAYS
+        WHERE segments.date BETWEEN {self.start_date} AND {self.end_date}
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"

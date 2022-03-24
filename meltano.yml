@@ -22,6 +22,13 @@ plugins:
       kind: password
     - name: login_customer_id
       kind: password
+    - name: start_date
+      kind: string
+    - name: end_date
+      kind: string
+    config:
+      start_date: 2022-03-23
+      end_date: 2022-03-24
   loaders:
   - name: target-jsonl
     variant: andyh1203

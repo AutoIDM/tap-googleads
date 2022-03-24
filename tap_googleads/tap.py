@@ -73,6 +73,18 @@ class TapGoogleAds(Tap):
             th.StringType,
             required=True,
         ),
+        th.Property(
+            "start_date",
+            th.StringType,
+            required=False,
+            default="",
+        ),
+        th.Property(
+            "end_date",
+            th.StringType,
+            required=False,
+            default="",
+        ),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:
