@@ -1,62 +1,91 @@
 {
     "type": "object",
     "properties": {
-        "customer_id": {
+        "_sdc_primary_key": {
             "type": "string"
         },
-        "campaign_resourceName": {
-            "type": "string"
+        "campaign": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "advertisingChannelType": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
-        "campaign_status": {
-            "type": "string"
+        "adGroup": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
-        "campaign_advertisingChannelType": {
-            "type": "string"
+        "metrics": {
+            "type": "object",
+            "properties": {
+                "clicks": {
+                    "type": "string"
+                },
+                "costMicros": {
+                    "type": "string"
+                },
+                "ctr": {
+                    "type": "number"
+                },
+                "averageCpc": {
+                    "type": "number"
+                },
+                "impressions": {
+                    "type": "string"
+                }
+            }
         },
-        "campaign_name": {
-            "type": "string"
+        "adGroupCriterion": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         },
-        "campaign_id": {
-            "type": "string"
+        "genderView": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                }
+            }
         },
-        "adGroup_resourceName": {
-            "type": "string"
-        },
-        "adGroup_name": {
-            "type": "string"
-        },
-        "adGroup_id": {
-            "type": "string"
-        },
-        "clicks": {
-            "type": "string"
-        },
-        "costMicros": {
-            "type": "string"
-        },
-        "ctr": {
-            "type": "number"
-        },
-        "averageCpc": {
-            "type": "number"
-        },
-        "impressions": {
-            "type": "string"
-        },
-        "adGroupCriterion_resourceName": {
-            "type": "string"
-        },
-        "adGroupCriterion_gender_type": {
-            "type": "string"
-        },
-        "genderView_resourceName": {
-            "type": "string"
-        },
-        "device": {
-            "type": "string"
-        },
-        "date": {
-            "type": "string"
+        "segments": {
+            "type": "object",
+            "properties": {
+                "device": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
         }
     }
 }

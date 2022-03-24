@@ -1,44 +1,71 @@
 {
     "type": "object",
     "properties": {
-        "customer_id": {
+        "_sdc_primary_key": {
             "type": "string"
         },
-        "campaign_resourceName": {
-            "type": "string"
+        "campaign": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
-        "campaign_name": {
-            "type": "string"
+        "metrics": {
+            "type": "object",
+            "properties": {
+                "clicks": {
+                    "type": "string"
+                },
+                "costMicros": {
+                    "type": "string"
+                },
+                "ctr": {
+                    "type": "number"
+                },
+                "averageCpc": {
+                    "type": "number"
+                },
+                "impressions": {
+                    "type": "string"
+                }
+            }
         },
-        "campaign_id": {
-            "type": "string"
+        "campaignCriterion": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "object",
+                    "properties": {
+                        "geoTargetConstant": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         },
-        "clicks": {
-            "type": "string"
+        "segments": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            }
         },
-        "costMicros": {
-            "type": "string"
-        },
-        "ctr": {
-            "type": "number"
-        },
-        "averageCpc": {
-            "type": "number"
-        },
-        "impressions": {
-            "type": "string"
-        },
-        "campaignCriterion_resourceName": {
-            "type": "string"
-        },
-        "campaignCriterion_location_geoTargetConstant": {
-            "type": "string"
-        },
-        "date": {
-            "type": "string"
-        },
-        "locationView_resourceName": {
-            "type": "string"
+        "locationView": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                }
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ plugins:
     namespace: tap_googleads
     executable: ./tap-googleads.sh
     capabilities:
-    - state
     - catalog
     - discover
     settings:
@@ -23,10 +22,6 @@ plugins:
       kind: password
     - name: login_customer_id
       kind: password
-    - name: start_date
-      value: '2010-01-01T00:00:00Z'
-    config:
-      start_date: '2010-01-01T00:00:00Z'
   loaders:
   - name: target-jsonl
     variant: andyh1203

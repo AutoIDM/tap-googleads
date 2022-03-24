@@ -1,17 +1,22 @@
 {
     "type": "object",
     "properties": {
-        "customer_id": {
+        "_sdc_primary_key": {
             "type": "string"
         },
-        "resourceName": {
-            "type": "string"
-        },
-        "name": {
-            "type": "string"
-        },
-        "id": {
-            "type": "string"
+        "campaign": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
         }
     }
 }

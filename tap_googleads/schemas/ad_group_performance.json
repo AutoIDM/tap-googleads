@@ -1,16 +1,24 @@
 {
     "type": "object",
     "properties": {
-        "_sdc_primary_key": {
-            "type": "string"
-        },
         "campaign": {
             "type": "object",
             "properties": {
                 "resourceName": {
                     "type": "string"
                 },
-                "name": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "adGroup": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 }
             }
@@ -18,45 +26,27 @@
         "metrics": {
             "type": "object",
             "properties": {
-                "conversions": {
-                    "type": "number"
-                }
-            }
-        },
-        "campaignCriterion": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
+                "clicks": {
                     "type": "string"
                 },
-                "location": {
-                    "type": "object",
-                    "properties": {
-                        "geoTargetConstant": {
-                            "type": "string"
-                        }
-                    }
+                "costMicros": {
+                    "type": "string"
+                },
+                "impressions": {
+                    "type": "string"
                 }
             }
         },
         "segments": {
             "type": "object",
             "properties": {
-                "conversionActionCategory": {
-                    "type": "string"
-                },
                 "date": {
                     "type": "string"
                 }
             }
         },
-        "locationView": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
-                    "type": "string"
-                }
-            }
+        "_sdc_primary_key": {
+            "type": "string"
         }
     }
 }
