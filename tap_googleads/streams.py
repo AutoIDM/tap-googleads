@@ -396,8 +396,8 @@ class CampaignPerformanceByLocation(ReportsStream):
     name = "campaign_performance_by_location"
     primary_keys_jsonpaths = [
         "campaign.resourceName",
+        "locationView.resourceName",
         "segments.date",
-        "campaignCriterion.location.geoTargetConstant",
     ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
@@ -424,8 +424,8 @@ class ConversionsByLocation(ReportsStream):
     name = "conversion_by_location"
     primary_keys_jsonpaths = [
         "campaign.resourceName",
+        "locationView.resourceName",
         "segments.date",
-        "campaignCriterion.location.geoTargetConstant",
     ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
