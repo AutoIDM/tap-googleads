@@ -22,6 +22,9 @@ plugins:
       kind: password
     - name: login_customer_id
       kind: password
+    select:
+    - conversion_by_location.*
+    - campaign_performance_by_location.*
   loaders:
   - name: target-jsonl
     variant: andyh1203
