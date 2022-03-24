@@ -194,7 +194,32 @@ class CampaignsStream(ReportsStream):
         return """
             SELECT campaign.id
                  , campaign.name
-            FROM campaign 
+                 , campaign.accessible_bidding_strategy
+                 , campaign.ad_serving_optimization_status
+                 , campaign.advertising_channel_sub_type
+                 , campaign.advertising_channel_type
+                 , campaign.base_campaign
+                 , campaign.bidding_strategy
+                 , campaign.bidding_strategy_type
+                 , campaign.campaign_budget
+                 , campaign.end_date
+                 , campaign.excluded_parent_asset_field_types
+                 , campaign.experiment_type
+                 , campaign.final_url_suffix
+                 , campaign.frequency_caps
+                 , campaign.labels
+                 , campaign.manual_cpm
+                 , campaign.manual_cpv
+                 , campaign.payment_mode
+                 , campaign.resource_name
+                 , campaign.serving_status
+                 , campaign.start_date
+                 , campaign.status
+                 , campaign.target_cpm
+                 , campaign.tracking_url_template
+                 , campaign.url_custom_parameters
+                 , campaign.video_brand_safety_suitability
+                FROM campaign 
             ORDER BY campaign.id
         """
 
