@@ -1,6 +1,9 @@
 {
     "type": "object",
     "properties": {
+        "_sdc_primary_key": {
+            "type": "string"
+        },
         "adGroup": {
             "type": "object",
             "properties": {

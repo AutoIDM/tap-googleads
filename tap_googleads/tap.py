@@ -1,5 +1,6 @@
 """GoogleAds tap class."""
 
+import datetime
 from typing import List
 
 from singer_sdk import Tap, Stream
@@ -72,6 +73,18 @@ class TapGoogleAds(Tap):
             "login_customer_id",
             th.StringType,
             required=True,
+        ),
+        th.Property(
+            "start_date",
+            th.StringType,
+            required=False,
+            default=datetime.date.today().isoformat(),
+        ),
+        th.Property(
+            "end_date",
+            th.StringType,
+            required=False,
+            default=datetime.date.today().isoformat(),
         ),
     ).to_dict()
 

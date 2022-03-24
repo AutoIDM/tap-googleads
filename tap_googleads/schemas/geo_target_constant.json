@@ -1,31 +1,34 @@
 {
-                "type": "object",
-                "properties": {
-                    "geoTargetConstant": {
-                        "type": "object",
-                        "properties": {
-                            "resourceName": {
-                                "type": "string"
-                            },
-                            "status": {
-                                "type": "string"
-                            },
-                            "id": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string"
-                            },
-                            "countryCode": {
-                                "type": "string"
-                            },
-                            "targetType": {
-                                "type": "string"
-                            },
-                            "canonicalName": {
-                                "type": "string"
-                            }
-                        }
-                    }
+    "type": "object",
+    "properties": {
+        "_sdc_primary_key": {
+            "type": "string"
+        },
+        "geoTargetConstant": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "targetType": {
+                    "type": "string"
+                },
+                "canonicalName": {
+                    "type": "string"
                 }
+            }
+        }
+    }
 }
