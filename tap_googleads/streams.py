@@ -320,3 +320,16 @@ class ConversionsByLocation(ReportsStream):
     primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "conversion_by_location.json"
+
+class CampaignLabel(ReportsStream):
+    """Conversions By Location"""
+
+    gaql = """
+    SELECT campaign_label.campaign, campaign_label.label, campaign_label.resource_name, campaign.id, campaign.name, campaign.resource_name, campaign.status, customer.id, customer.resource_name, label.name, label.resource_name, label.id, label.status 
+    FROM campaign_label
+    """
+    records_jsonpath = "$.results[*]"
+    name = "campaign_label"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "campaign_label.json"
