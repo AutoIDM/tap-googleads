@@ -321,6 +321,7 @@ class ConversionsByLocation(ReportsStream):
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "conversion_by_location.json"
 
+
 class CampaignLabel(ReportsStream):
     """Conversions By Location"""
 
