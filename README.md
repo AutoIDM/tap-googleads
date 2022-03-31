@@ -1,15 +1,35 @@
 # ` tap-googleads` ![Build and Tests](https://github.com/AutoIDM/tap-googleads/actions/workflows/ci.yml/badge.svg?branch=main) [![PyPI download month](https://img.shields.io/pypi/dm/tap-googleads.svg)](https://pypi.python.org/pypi/tap-googleads/) 
 
-`tap-googleads` is a Singer tap for GoogleAds.
-
 THIS IS NOT READY FOR PRODUCTION. Bearer tokens sometimes slip out to logs. Use at your own Peril :D
 
+## Capabilities
 
-Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
+* `catalog`
+* `state`
+* `discover`
+* `about`
+* `stream-maps`
+
+## Settings
+
+| Setting          | Required | Default | Description |
+|:-----------------|:--------:|:-------:|:------------|
+| client_id        | True     | None    | ClientID from Oauth Setup |
+| client_secret    | True     | None    | ClientSecret from Oauth Setup |
+| developer_token  | True     | None    | Developer Token from Google Ads Console |
+| refresh_token    | True     | None    | Refresh Token from Oauth dance |
+| customer_id      | True     | None    | Customer ID from Google Ads Console, note this should be the top level client. This tap will pull all subaccounts |
+| login_customer_id| True     | None    | Customer ID that has access to the customer_id, note that they can be the same, but they don't have to be as this could be a Manager account |
+| start_date       | True     | 2022-03-24T00:00:00Z | Date to start our search from, applies to Streams where there is a filter date. Note that Google responds to Data in buckets of 1 Day increments |
+| end_date         | True     | 2022-03-31T00:00:00Z | Date to end our search on, applies to Streams where there is a filter date. Note that the query is BETWEEN start_date AND end_date |
+
+### Get refresh token
+1. GET https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=client_id&redirect_uri=http://127.0.0.1&scope=https://www.googleapis.com/auth/adwords&state=autoidm&access_type=offline&prompt=select_account&include_granted_scopes=true
+1. POST https://www.googleapis.com/oauth2/v4/token?code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri=http://127.0.0.1&grant_type=authorization_code
+1. POST https://www.googleapis.com/oauth2/v4/token?refresh_token={refres_token}&client_id={client_id}&client_secret={client_secret]&grant_type=refresh_token
+
 
 ## Installation
-
-- [ ] `Developer TODO:` Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
 
 ```bash
 pipx install tap-googleads
@@ -17,13 +37,8 @@ pipx install tap-googleads
 
 ## Configuration
 
-### Get refresh token
-1. GET https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=client_id&redirect_uri=http://127.0.0.1&scope=https://www.googleapis.com/auth/adwords&state=autoidm&access_type=offline&prompt=select_account&include_granted_scopes=true
-1. POST https://www.googleapis.com/oauth2/v4/token?code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri=http://127.0.0.1&grant_type=authorization_code
-1. POST https://www.googleapis.com/oauth2/v4/token?refresh_token={refres_token}&client_id={client_id}&client_secret={client_secret]&grant_type=refresh_token
 ### Accepted Config Options
 
-- [ ] `Developer TODO:` Provide a list of config options accepted by the tap.
 
 A full list of supported settings and capabilities for this
 tap is available by running:
@@ -31,10 +46,6 @@ tap is available by running:
 ```bash
 tap-googleads --about
 ```
-
-### Source Authentication and Authorization
-
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
 
 ## Usage
 
@@ -105,3 +116,5 @@ meltano elt tap-googleads target-jsonl
 
 See the [dev guide](https://sdk.meltano.com/en/latest/dev_guide.html) for more instructions on how to use the SDK to 
 develop your own taps and targets.
+
+Built with the [Meltano SDK](https://sdk.meltano.com) for Singer Taps and Targets.
