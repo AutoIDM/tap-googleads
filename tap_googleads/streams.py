@@ -314,6 +314,7 @@ class CampaignPerformance(ReportsStream):
             FROM campaign 
             WHERE segments.date {self.between_filter}
             """
+
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
     primary_keys_jsonpaths = ["campaign.resourceName", "segments.date"]
@@ -486,6 +487,9 @@ class CampaignLabel(ReportsStream):
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_label"
-    primary_keys = ["id"]
+    primary_keys_jsonpaths = [
+        "campaignLabel.resourceName",
+    ]
+    primary_keys = ["_sdc_primary_key"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_label.json"
