@@ -314,6 +314,7 @@ class CampaignPerformance(ReportsStream):
             FROM campaign 
             WHERE segments.date {self.between_filter}
             """
+
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
     primary_keys_jsonpaths = ["campaign.resourceName", "segments.date"]
