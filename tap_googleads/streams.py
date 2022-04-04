@@ -486,6 +486,9 @@ class CampaignLabel(ReportsStream):
     """
     records_jsonpath = "$.results[*]"
     name = "campaign_label"
-    primary_keys = ["id"]
+    primary_keys_jsonpaths = [
+        "campaignLabel.resource_name",
+    ]
+    primary_keys = ["_sdc_primary_key"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_label.json"
