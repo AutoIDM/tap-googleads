@@ -487,7 +487,7 @@ class CampaignLabel(ReportsStream):
     records_jsonpath = "$.results[*]"
     name = "campaign_label"
     primary_keys_jsonpaths = [
-        "campaignLabel.resource_name",
+        "campaignLabel.resourceName",
     ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
