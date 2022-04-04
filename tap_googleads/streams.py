@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
+from datetime import datetime
 
 from singer_sdk import typing as th  # JSON Schema typing helpers
 
@@ -177,6 +178,26 @@ class ReportsStream(GoogleAdsStream):
         raise NotImplementedError
 
     @property
+    def start_date(self):
+        start_date = self.config["start_date"]
+        format_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%SZ").strftime(
+            "%Y-%m-%d"
+        )
+        return format_date
+
+    @property
+    def end_date(self):
+        end_date = self.config["end_date"]
+        format_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%SZ").strftime(
+            "%Y-%m-%d"
+        )
+        return format_date
+
+    @property
+    def between_filter(self):
+        return f"BETWEEN '{self.start_date}' AND '{self.end_date}'"
+
+    @property
     def path(self):
         # Paramas
         path = "/customers/{client_id}"
@@ -253,7 +274,9 @@ class AdGroupsStream(ReportsStream):
 class AdGroupsPerformance(ReportsStream):
     """AdGroups Performance"""
 
-    gaql = """
+    @property
+    def gaql(self) -> str:
+        return f"""
         SELECT campaign.id
              , ad_group.id
              , metrics.impressions
@@ -261,8 +284,8 @@ class AdGroupsPerformance(ReportsStream):
              , metrics.cost_micros
              , segments.date
         FROM ad_group
-        WHERE segments.date DURING LAST_7_DAYS
-    """
+        WHERE segments.date {self.between_filter}
+        """
 
     records_jsonpath = "$.results[*]"
     name = "ad_group_performance"
@@ -275,20 +298,22 @@ class AdGroupsPerformance(ReportsStream):
 class CampaignPerformance(ReportsStream):
     """Campaign Performance"""
 
-    gaql = """
-        SELECT campaign.id
-             , campaign.name
-             , campaign.status
-             , segments.device
-             , segments.date
-             , metrics.impressions
-             , metrics.clicks
-             , metrics.ctr
-             , metrics.average_cpc
-             , metrics.cost_micros 
-        FROM campaign 
-        WHERE segments.date DURING LAST_7_DAYS
-    """
+    @property
+    def gaql(self) -> str:
+        return f"""
+            SELECT campaign.id
+                 , campaign.name
+                 , campaign.status
+                 , segments.device
+                 , segments.date
+                 , metrics.impressions
+                 , metrics.clicks
+                 , metrics.ctr
+                 , metrics.average_cpc
+                 , metrics.cost_micros 
+            FROM campaign 
+            WHERE segments.date {self.between_filter}
+            """
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
     primary_keys_jsonpaths = ["campaign.resourceName", "segments.date"]
@@ -300,26 +325,28 @@ class CampaignPerformance(ReportsStream):
 class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
-    gaql = """
-        SELECT ad_group_criterion.age_range.type
-             , campaign.name
-             , campaign.id
-             , campaign.status
-             , ad_group.name
-             , ad_group.id
-             , segments.date
-             , segments.device
-             , ad_group_criterion.system_serving_status
-             , ad_group_criterion.bid_modifier
-             , metrics.clicks
-             , metrics.impressions
-             , metrics.ctr
-             , metrics.average_cpc
-             , metrics.cost_micros
-             , campaign.advertising_channel_type 
-        FROM age_range_view 
-        WHERE segments.date DURING LAST_7_DAYS
-    """
+    @property
+    def gaql(self) -> str:
+        return f"""
+            SELECT ad_group_criterion.age_range.type
+                 , campaign.name
+                 , campaign.id
+                 , campaign.status
+                 , ad_group.name
+                 , ad_group.id
+                 , segments.date
+                 , segments.device
+                 , ad_group_criterion.system_serving_status
+                 , ad_group_criterion.bid_modifier
+                 , metrics.clicks
+                 , metrics.impressions
+                 , metrics.ctr
+                 , metrics.average_cpc
+                 , metrics.cost_micros
+                 , campaign.advertising_channel_type 
+            FROM age_range_view 
+            WHERE segments.date {self.between_filter}
+           """
 
     records_jsonpath = "$.results[*]"
     name = "campaign_performance_by_age_range_and_device"
@@ -338,26 +365,28 @@ class CampaignPerformanceByAgeRangeAndDevice(ReportsStream):
 class CampaignPerformanceByGenderAndDevice(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
-    gaql = """
-        SELECT ad_group_criterion.gender.type
-             , campaign.name
-             , campaign.status
-             , campaign.id
-             , ad_group.name
-             , ad_group.id
-             , segments.date
-             , segments.device
-             , ad_group_criterion.system_serving_status
-             , ad_group_criterion.bid_modifier
-             , metrics.clicks
-             , metrics.impressions
-             , metrics.ctr
-             , metrics.average_cpc
-             , metrics.cost_micros
-             , campaign.advertising_channel_type 
-        FROM gender_view 
-        WHERE segments.date DURING LAST_7_DAYS
-    """
+    @property
+    def gaql(self) -> str:
+        return f"""
+            SELECT ad_group_criterion.gender.type
+                 , campaign.name
+                 , campaign.status
+                 , campaign.id
+                 , ad_group.name
+                 , ad_group.id
+                 , segments.date
+                 , segments.device
+                 , ad_group_criterion.system_serving_status
+                 , ad_group_criterion.bid_modifier
+                 , metrics.clicks
+                 , metrics.impressions
+                 , metrics.ctr
+                 , metrics.average_cpc
+                 , metrics.cost_micros
+                 , campaign.advertising_channel_type 
+            FROM gender_view 
+            WHERE segments.date {self.between_filter}
+        """
 
     records_jsonpath = "$.results[*]"
     name = "campaign_performance_by_gender_and_device"
@@ -376,21 +405,23 @@ class CampaignPerformanceByGenderAndDevice(ReportsStream):
 class CampaignPerformanceByLocation(ReportsStream):
     """Campaign Performance By Age Range and Device"""
 
-    gaql = """
-        SELECT campaign_criterion.location.geo_target_constant
-             , campaign.name
-             , campaign.id
-             , campaign_criterion.bid_modifier
-             , segments.date
-             , metrics.clicks
-             , metrics.impressions
-             , metrics.ctr
-             , metrics.average_cpc
-             , metrics.cost_micros 
-        FROM location_view 
-        WHERE segments.date DURING LAST_7_DAYS 
-          AND campaign_criterion.status != 'REMOVED'
-    """
+    @property
+    def gaql(self) -> str:
+        return f"""
+            SELECT campaign_criterion.location.geo_target_constant
+                 , campaign.name
+                 , campaign.id
+                 , campaign_criterion.bid_modifier
+                 , segments.date
+                 , metrics.clicks
+                 , metrics.impressions
+                 , metrics.ctr
+                 , metrics.average_cpc
+                 , metrics.cost_micros 
+            FROM location_view 
+            WHERE segments.date {self.between_filter}
+              AND campaign_criterion.status != 'REMOVED'
+                """
 
     records_jsonpath = "$.results[*]"
     name = "campaign_performance_by_location"
@@ -407,18 +438,20 @@ class CampaignPerformanceByLocation(ReportsStream):
 class ConversionsByLocation(ReportsStream):
     """Conversions By Location"""
 
-    gaql = """
-       SELECT campaign_criterion.location.geo_target_constant
-            , campaign.name
-            , campaign.id
-            , campaign_criterion.bid_modifier
-            , segments.date
-            , segments.conversion_action_category
-            , metrics.conversions 
-        FROM location_view 
-        WHERE segments.date DURING LAST_7_DAYS 
-          AND campaign_criterion.status != 'REMOVED'
-    """
+    @property
+    def gaql(self) -> str:
+        return f"""
+            SELECT campaign_criterion.location.geo_target_constant
+                 , campaign.name
+                 , campaign.id
+                 , campaign_criterion.bid_modifier
+                 , segments.date
+                 , segments.conversion_action_category
+                 , metrics.conversions 
+            FROM location_view 
+            WHERE segments.date {self.between_filter}
+              AND campaign_criterion.status != 'REMOVED'
+            """
 
     records_jsonpath = "$.results[*]"
     name = "conversion_by_location"
@@ -430,3 +463,29 @@ class ConversionsByLocation(ReportsStream):
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "conversion_by_location.json"
+
+
+class CampaignLabel(ReportsStream):
+    """Conversions By Location"""
+
+    gaql = """
+        SELECT campaign_label.campaign
+             , campaign_label.label
+             , campaign_label.resource_name
+             , campaign.id
+             , campaign.name
+             , campaign.resource_name
+             , campaign.status
+             , customer.id
+             , customer.resource_name
+             , label.name
+             , label.resource_name
+             , label.id
+             , label.status 
+       FROM campaign_label
+    """
+    records_jsonpath = "$.results[*]"
+    name = "campaign_label"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "campaign_label.json"
