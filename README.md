@@ -2,6 +2,10 @@
 
 THIS IS NOT READY FOR PRODUCTION. Bearer tokens sometimes slip out to logs. Use at your own Peril :D
 
+## unique tap-googleads functionality
+1. `_sdc_primary_key` is added to each stream in order to give a primary_key because google's api has nested data that doesn't play nicely without a top level primary key, so we copy the data needed for a primary key to this made up field. All other fields match the api response.   
+
+
 ## Capabilities
 
 * `catalog`
