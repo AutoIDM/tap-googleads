@@ -9,7 +9,6 @@ THIS IS NOT READY FOR PRODUCTION. Bearer tokens sometimes slip out to logs. Use 
 ## Capabilities
 
 * `catalog`
-* `state`
 * `discover`
 * `about`
 * `stream-maps`
