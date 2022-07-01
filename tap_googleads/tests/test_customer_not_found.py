@@ -69,7 +69,7 @@ def test_customer_not_enabled(mocked_responses):
     mocked_responses.add(
         responses.POST,
         # TODO cleanup long url, googleads.googleapis.com/* would suffice
-        "https://googleads.googleapis.com/v8/customers/12345/googleAds:search?pageSize=10000&query=%0A%20%20%20%20%20%20%20%20%20%20%20%20SELECT%20campaign.id%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20,%20campaign.name%0A%20%20%20%20%20%20%20%20%20%20%20%20FROM%20campaign%20%0A%20%20%20%20%20%20%20%20%20%20%20%20ORDER%20BY%20campaign.id%0A%20%20%20%20%20%20%20%20",
+        "https://googleads.googleapis.com/v11/customers/12345/googleAds:search?pageSize=10000&query=%0A%20%20%20%20%20%20%20%20%20%20%20%20SELECT%20campaign.id%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20,%20campaign.name%0A%20%20%20%20%20%20%20%20%20%20%20%20FROM%20campaign%20%0A%20%20%20%20%20%20%20%20%20%20%20%20ORDER%20BY%20campaign.id%0A%20%20%20%20%20%20%20%20",
         body=json.dumps(customer_not_enabled_body).encode("utf-8"),
         status=403,
         content_type="application/json",
