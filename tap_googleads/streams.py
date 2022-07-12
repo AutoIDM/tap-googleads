@@ -12,6 +12,19 @@ from tap_googleads.auth import GoogleAdsAuthenticator
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
+class CustomerStream(GoogleAdsStream):
+    """Define custom stream."""
+
+    @property
+    def path(self):
+        return "/customers/" + self.config["customer_id"]
+
+    name = "customers"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "customer.json"
+
+
 class AccessibleCustomers(GoogleAdsStream):
     """Accessible Customers"""
 
