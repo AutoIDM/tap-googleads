@@ -97,18 +97,6 @@ class TapGoogleAds(Tap):
             required=True,
             description="Date to end our search on, applies to Streams where there is a filter date. Note that the query is BETWEEN start_date AND end_date",
         ),
-        th.Property(
-            "start_date",
-            th.StringType,
-            required=False,
-            default=datetime.date.today().isoformat(),
-        ),
-        th.Property(
-            "end_date",
-            th.StringType,
-            required=False,
-            default=datetime.date.today().isoformat(),
-        ),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:
