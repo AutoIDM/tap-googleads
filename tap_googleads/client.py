@@ -99,7 +99,8 @@ class GoogleAdsStream(RESTStream):
         if 400 <= response.status_code < 500:
             msg = (
                 f"{response.status_code} Client Error: "
-                f"{response.reason} for path: {self.path}"
+                f"{response.reason} for path: {self.path}."
+                f"response.json() {response.json()}:"
             )
             raise FatalAPIError(msg)
 
