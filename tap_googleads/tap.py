@@ -1,6 +1,5 @@
 """GoogleAds tap class."""
 
-import datetime
 from typing import List
 
 from singer_sdk import Tap, Stream
