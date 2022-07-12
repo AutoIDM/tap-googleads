@@ -27,18 +27,24 @@ THIS IS NOT READY FOR PRODUCTION. Bearer tokens sometimes slip out to logs. Use 
 | end_date         | True     | 2022-03-31T00:00:00Z (Today) | Date to end our search on, applies to Streams where there is a filter date. Note that the query is BETWEEN start_date AND end_date |
 
 ### Get refresh token
-1. GET https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=client_id&redirect_uri=http://127.0.0.1&scope=https://www.googleapis.com/auth/adwords&state=autoidm&access_type=offline&prompt=select_account&include_granted_scopes=true
-1. POST https://www.googleapis.com/oauth2/v4/token?code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri=http://127.0.0.1&grant_type=authorization_code
-1. POST https://www.googleapis.com/oauth2/v4/token?refresh_token={refres_token}&client_id={client_id}&client_secret={client_secret]&grant_type=refresh_token
+Get a developer token, client id, and client secret as recommended in 
+the [Google Ads API documentation](https://developers.google.com/google-ads/api/docs/first-call/overview). 
+Then do the following:
+
+1. Modify following template url and put it in a browser. Then follow the prompts to authenticate.
+`GET https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={client_id}&redirect_uri=http://127.0.0.1&scope=https://www.googleapis.com/auth/adwords&access_type=offline&prompt=select_account&include_granted_scopes=true`
 
 
-## Installation
+2. Modify the following url with the value in the `code` parameter that was returned in the previous browser url bar. Replace all other templated values and submit a `POST` request: 
+`https://www.googleapis.com/oauth2/v4/token?code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri=http://127.0.0.1&grant_type=authorization_code`
 
-```bash
-pipx install tap-googleads
-```
 
-## Configuration
+3. From the response you can grab the `refresh_token` and use it as is. Sometimes the following step is also required.
+
+
+4. (IF NECESSARY) Modify the following templated url as suggested and submit a POST request.
+`https://www.googleapis.com/oauth2/v4/token?refresh_token={refres_token}&client_id={client_id}&client_secret={client_secret]&grant_type=refresh_token`
+
 
 ### Accepted Config Options
 
