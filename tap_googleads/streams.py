@@ -342,7 +342,11 @@ class CampaignPerformance(ReportsStream):
 
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
-    primary_keys_jsonpaths = ["campaign.resourceName", "segments.date"]
+    primary_keys_jsonpaths = [
+        "campaign.resourceName",
+        "segments.date",
+        "segments.device",
+    ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance.json"
@@ -485,6 +489,7 @@ class ConversionsByLocation(ReportsStream):
         "campaign.resourceName",
         "locationView.resourceName",
         "segments.date",
+        "segments.conversion_action_category",
     ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
