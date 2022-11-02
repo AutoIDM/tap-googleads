@@ -131,10 +131,10 @@ class GoogleAdsStream(RESTStream):
                 yield transformed_record
         except CustomerNotEnabledError as e:
             self.logger.warning(
-            "We hit the Customer Not Enabled error. "
-            "Happens when we get a customer from the hierarchy list that "
-            "isn't enabled anymore, most likely due to a customer being "
-            f"disabled after the API that lists customers is called.  {e=}"
+                "We hit the Customer Not Enabled error. "
+                "Happens when we get a customer from the hierarchy list that "
+                "isn't enabled anymore, most likely due to a customer being "
+                f"disabled after the API that lists customers is called.  {e=}"
             )
 
     def prepare_request_payload(
