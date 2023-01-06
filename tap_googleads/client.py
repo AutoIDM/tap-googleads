@@ -95,7 +95,7 @@ class GoogleAdsStream(RESTStream):
                 == "CUSTOMER_NOT_ENABLED"
             ):
                 raise CustomerNotEnabledError(msg)
-        
+
         if response.status_code == 429:
             msg = (
                 f"{response.status_code} Client Error: "
@@ -103,7 +103,6 @@ class GoogleAdsStream(RESTStream):
                 f"response.json() {response.json()}:"
             )
             raise RetriableAPIError(msg)
-
 
         if 400 <= response.status_code < 500:
             msg = (
