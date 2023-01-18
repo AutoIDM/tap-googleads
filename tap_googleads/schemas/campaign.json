@@ -1,22 +1,94 @@
 {
-    "type": "object",
-    "properties": {
-        "_sdc_primary_key": {
-            "type": "string"
+  "type": "object",
+  "properties": {
+    "_sdc_primary_key": {
+      "type": "string"
+    },
+    "campaign": {
+      "type": "object",
+      "properties": {
+        "resourceName": {
+          "type": "string"
         },
-        "campaign": {
-            "type": "object",
-            "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                }
-            }
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "accessibleBiddingStrategy": {
+          "type": "string"
+        },
+        "adServingOptimizationStatus": {
+          "type": "string"
+        },
+        "advertisingChannelSubType": {
+          "type": "string"
+        },
+        "advertisingChannelType": {
+          "type": "string"
+        },
+        "baseCampaign": {
+          "type": "string"
+        },
+        "biddingStrategy": {
+          "type": "string"
+        },
+        "biddingStrategyType": {
+          "type": "string"
+        },
+        "campaignBudget": {
+          "type": "string"
+        },
+        "endDate": {
+          "type": "string"
+        },
+        "excludedParentAssetFieldTypes": {
+          "type": "array"
+        },
+        "experimentType": {
+          "type": "string"
+        },
+        "finalUrlSuffix": {
+          "type": "string"
+        },
+        "frequencyCaps": {
+          "type": "array"
+        },
+        "labels": {
+          "type": "array"
+        },
+        "paymentMode": {
+          "type": "string"
+        },
+        "servingStatus": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string"
+        },
+        "trackingUrlTemplate": {
+          "type": "string"
+        },
+        "urlCustomParameters": {
+          "type": "array"
+        },
+        "videoBrandSafetySuitability": {
+          "type": "string"
+        },
+        "manualCpm": {
+          "type": "object"
+        },
+        "manualCpv": {
+          "type": "object"
+        },
+        "targetCpm": {
+          "type": "object"
         }
+      }
     }
+  }
 }
