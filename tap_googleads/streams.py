@@ -12,6 +12,19 @@ from tap_googleads.auth import GoogleAdsAuthenticator
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
+class CustomerStream(GoogleAdsStream):
+    """Define custom stream."""
+
+    @property
+    def path(self):
+        return "/customers/" + self.config["customer_id"]
+
+    name = "customers"
+    primary_keys = ["id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "customer.json"
+
+
 class AccessibleCustomers(GoogleAdsStream):
     """Accessible Customers"""
 
@@ -202,7 +215,32 @@ class CampaignsStream(ReportsStream):
         return """
             SELECT campaign.id
                  , campaign.name
-            FROM campaign 
+                 , campaign.accessible_bidding_strategy
+                 , campaign.ad_serving_optimization_status
+                 , campaign.advertising_channel_sub_type
+                 , campaign.advertising_channel_type
+                 , campaign.base_campaign
+                 , campaign.bidding_strategy
+                 , campaign.bidding_strategy_type
+                 , campaign.campaign_budget
+                 , campaign.end_date
+                 , campaign.excluded_parent_asset_field_types
+                 , campaign.experiment_type
+                 , campaign.final_url_suffix
+                 , campaign.frequency_caps
+                 , campaign.labels
+                 , campaign.manual_cpm
+                 , campaign.manual_cpv
+                 , campaign.payment_mode
+                 , campaign.resource_name
+                 , campaign.serving_status
+                 , campaign.start_date
+                 , campaign.status
+                 , campaign.target_cpm
+                 , campaign.tracking_url_template
+                 , campaign.url_custom_parameters
+                 , campaign.video_brand_safety_suitability
+                FROM campaign 
             ORDER BY campaign.id
         """
 
@@ -304,7 +342,11 @@ class CampaignPerformance(ReportsStream):
 
     records_jsonpath = "$.results[*]"
     name = "campaign_performance"
-    primary_keys_jsonpaths = ["campaign.resourceName", "segments.date"]
+    primary_keys_jsonpaths = [
+        "campaign.resourceName",
+        "segments.date",
+        "segments.device",
+    ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "campaign_performance.json"
@@ -447,6 +489,7 @@ class ConversionsByLocation(ReportsStream):
         "campaign.resourceName",
         "locationView.resourceName",
         "segments.date",
+        "segments.conversion_action_category",
     ]
     primary_keys = ["_sdc_primary_key"]
     replication_key = None
