@@ -2,10 +2,11 @@
 
 from urllib.parse import urlencode, urljoin
 from pathlib import Path
-from typing import Any, Dict, Optional, Iterable
+from typing import Any, Dict, Optional, Union, List, Iterable
 
 from memoization import cached
 
+from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.pagination import JSONPathPaginator
@@ -66,7 +67,7 @@ class GoogleAdsStream(RESTStream):
             params["order_by"] = self.replication_key
         return params
 
-    def validate_22response(self, response):
+    def validate_response(self, response):
         # Still catch error status codes
         if response.status_code == 403:
             msg = (
