@@ -1,13 +1,12 @@
 """Stream type classes for tap-googleads."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
+from typing import Any, Dict, Optional, Iterable
 from datetime import datetime
 
 from singer_sdk import typing as th  # JSON Schema typing helpers
 
 from tap_googleads.client import GoogleAdsStream
-from tap_googleads.auth import GoogleAdsAuthenticator
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -42,20 +41,27 @@ class CustomerHierarchyStream(GoogleAdsStream):
 
     # TODO add a seperate stream to get the Customer information and return i
     rest_method = "POST"
+    path = "/customers/{client_id}/googleAds:search"
+    records_jsonpath = "$.results[*]"
+    name = "customer_hierarchy"
+    primary_keys_jsonpaths = ["customerClient.id"]
+    primary_keys = ["_sdc_primary_key"]
+    replication_key = None
+    parent_stream_type = AccessibleCustomers
+    schema_filepath = SCHEMAS_DIR / "customer_hierarchy.json"
 
-    @property
-    def path(self):
-        # Paramas
-        path = "/customers/{client_id}"
-        path = path + "/googleAds:search"
-        path = path + "?pageSize=10000"
-        path = path + f"&query={self.gaql}"
-        return path
+    def get_url_params(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        params = super().get_url_params(context, next_page_token)
+        params["pageSize"] = "10000"
+        params["query"] = self.gaql
+        return params
 
     @property
     def gaql(self):
         return """
-	        SELECT customer_client.client_customer
+            SELECT customer_client.client_customer
                  , customer_client.level
                  , customer_client.manager
                  , customer_client.descriptive_name
@@ -65,29 +71,6 @@ class CustomerHierarchyStream(GoogleAdsStream):
             FROM customer_client
             WHERE customer_client.level <= 1
             """
-
-    records_jsonpath = "$.results[*]"
-    name = "customer_hierarchy"
-    primary_keys_jsonpaths = ["customerClient.id"]
-    primary_keys = ["_sdc_primary_key"]
-    replication_key = None
-    parent_stream_type = AccessibleCustomers
-    schema = th.PropertiesList(
-        th.Property(
-            "customerClient",
-            th.ObjectType(
-                th.Property("resourceName", th.StringType),
-                th.Property("clientCustomer", th.StringType),
-                th.Property("level", th.StringType),
-                th.Property("timeZone", th.StringType),
-                th.Property("manager", th.BooleanType),
-                th.Property("descriptiveName", th.StringType),
-                th.Property("currencyCode", th.StringType),
-                th.Property("id", th.StringType),
-            ),
-        ),
-        th.Property("_sdc_primary_key", th.StringType),
-    ).to_dict()
 
     # Goal of this stream is to send to children stream a dict of
     # login-customer-id:customer-id to query for all queries downstream
@@ -115,7 +98,7 @@ class CustomerHierarchyStream(GoogleAdsStream):
             for row in self.request_records(context):
                 row = self.post_process(row, context)
                 # Don't search Manager accounts as we can't query them for everything
-                if row["customerClient"]["manager"] == True:
+                if row["customerClient"]["manager"] is True:
                     continue
                 yield row
 
@@ -129,14 +112,22 @@ class GeotargetsStream(GoogleAdsStream):
 
     rest_method = "POST"
 
-    @property
-    def path(self):
-        # Paramas
-        path = "/customers/{login_customer_id}"
-        path = path + "/googleAds:search"
-        path = path + "?pageSize=10000"
-        path = path + f"&query={self.gaql}"
-        return path
+    records_jsonpath = "$.results[*]"
+    name = "geo_target_constant"
+    primary_keys_jsonpaths = ["geoTargetConstant.resourceName"]
+    primary_keys = ["_sdc_primary_key"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "geo_target_constant.json"
+    parent_stream_type = None  # Override ReportsStream default as this is a constant
+    path = "/customers/{login_customer_id}/googleAds:search"
+
+    def get_url_params(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        params = super().get_url_params(context, next_page_token)
+        params["pageSize"] = "10000"
+        params["query"] = self.gaql
+        return params
 
     gaql = """
         SELECT geo_target_constant.canonical_name
@@ -147,18 +138,20 @@ class GeotargetsStream(GoogleAdsStream):
              , geo_target_constant.target_type 
         FROM geo_target_constant
     """
-    records_jsonpath = "$.results[*]"
-    name = "geo_target_constant"
-    primary_keys_jsonpaths = ["geoTargetConstant.resourceName"]
-    primary_keys = ["_sdc_primary_key"]
-    replication_key = None
-    schema_filepath = SCHEMAS_DIR / "geo_target_constant.json"
-    parent_stream_type = None  # Override ReportsStream default as this is a constant
 
 
 class ReportsStream(GoogleAdsStream):
     rest_method = "POST"
     parent_stream_type = CustomerHierarchyStream
+    path = "/customers/{client_id}/googleAds:search"
+
+    def get_url_params(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        params = super().get_url_params(context, next_page_token)
+        params["pageSize"] = "10000"
+        params["query"] = self.gaql
+        return params
 
     @property
     def gaql(self):
@@ -183,15 +176,6 @@ class ReportsStream(GoogleAdsStream):
     @property
     def between_filter(self):
         return f"BETWEEN '{self.start_date}' AND '{self.end_date}'"
-
-    @property
-    def path(self):
-        # Paramas
-        path = "/customers/{client_id}"
-        path = path + "/googleAds:search"
-        path = path + "?pageSize=10000"
-        path = path + f"&query={self.gaql}"
-        return path
 
 
 class CampaignsStream(ReportsStream):
@@ -234,7 +218,6 @@ class AdGroupsStream(ReportsStream):
                  , ad_group.labels
                  , ad_group.id
                  , ad_group.final_url_suffix
-                 , ad_group.explorer_auto_optimizer_setting.opt_in
                  , ad_group.excluded_parent_asset_field_types
                  , ad_group.effective_target_roas_source
                  , ad_group.effective_target_roas

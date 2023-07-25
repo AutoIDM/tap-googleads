@@ -1,0 +1,67 @@
+{
+    "type": "object",
+    "properties": {
+        "customerClient": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "properties": {
+                "resourceName": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "clientCustomer": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "level": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "timeZone": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "manager": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "descriptiveName": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "currencyCode": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            }
+        },
+        "_sdc_primary_key": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    }
+}

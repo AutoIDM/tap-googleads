@@ -1,19 +1,14 @@
 """Tests standard tap features using the built-in SDK tests library."""
 
 import datetime
-from pathlib import Path
 
-from singer_sdk.testing import get_standard_tap_tests
 from singer_sdk.tap_base import Tap
 from singer_sdk.streams.core import Stream
-from singer_sdk.exceptions import FatalAPIError
 import tap_googleads.tap
 import pytest
 import json
-import importlib
 
 import responses
-import requests
 
 SAMPLE_CONFIG = {
     "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
@@ -41,7 +36,6 @@ def mocked_responses():
 
 
 def test_customer_not_enabled(mocked_responses):
-
     auth_response = {
         "access_token": "access_granted",
         "expires_in": "10000000",
