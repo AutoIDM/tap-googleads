@@ -274,6 +274,10 @@ class CampaignPerformance(ReportsStream):
             SELECT campaign.id
                  , campaign.name
                  , campaign.status
+                 , campaign.start_date
+                 , campaign.end_date
+                 , campaign.advertising_channel_type
+                 , campaign.advertising_channel_sub_type
                  , segments.device
                  , segments.date
                  , metrics.impressions
