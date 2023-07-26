@@ -3,15 +3,15 @@ on:
   push:
     branches:
       - main
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10"]
+        python-version: [3.8, 3.9, "3.10"]
         os: [ubuntu-latest, windows-latest, macos-latest]
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -24,7 +24,13 @@ jobs:
           pip install poetry==1.1.12
       - name: Build tap on Python ${{ matrix.python-version }} 
         run: poetry build
+  authorize:
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
   test:
+    needs: authorize
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

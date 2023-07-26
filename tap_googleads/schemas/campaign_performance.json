@@ -15,6 +15,18 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "advertisingChannelType": {
+                    "type": "string"
+                },
+                "AdvertisingChannelSubType": {
+                    "type": "string"
                 }
             }
         },

@@ -10,15 +10,15 @@ keywords = [
 license = "Apache 2.0"
 
 [tool.poetry.dependencies]
-python = "<3.11,>=3.6.2"
+python = "<3.11,>=3.8"
 requests = "^2.25.1"
-singer-sdk = "0.3.17"
+singer-sdk = "0.29.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 tox = "^3.24.4"
 flake8 = "^3.9.2"
-black = "^21.9b0"
+black = "^23.7.0"
 pydocstyle = "^6.1.1"
 mypy = "^0.910"
 types-requests = "^2.25.8"

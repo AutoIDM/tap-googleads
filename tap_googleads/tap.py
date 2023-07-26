@@ -72,27 +72,40 @@ class TapGoogleAds(Tap):
             "customer_id",
             th.StringType,
             required=True,
-            description="Customer ID from Google Ads Console, note this should be the top level client. This tap will pull all subaccounts",
+            description=(
+                "Customer ID from Google Ads Console, note this should be the top "
+                "level client. This tap will pull all subaccounts",
+            ),
         ),
         th.Property(
             "login_customer_id",
             th.StringType,
             required=True,
-            description="Customer ID that has access to the customer_id, note that they can be the same, but they don't have to be as this could be a Manager account",
+            description=(
+                "Customer ID that has access to the customer_id, note that they can be "
+                "the same, but they don't have to be as this could be a Manager account"
+            ),
         ),
         th.Property(
             "start_date",
             th.DateTimeType,
             default=(date.today() - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ"),
             required=True,
-            description="Date to start our search from, applies to Streams where there is a filter date. Note that Google responds to Data in buckets of 1 Day increments",
+            description=(
+                "Date to start our search from, applies to Streams where there is a "
+                "filter date. Note that Google responds to Data in buckets of 1 Day "
+                "increments"
+            ),
         ),
         th.Property(
             "end_date",
             th.DateTimeType,
             default=date.today().strftime("%Y-%m-%dT%H:%M:%SZ"),
             required=True,
-            description="Date to end our search on, applies to Streams where there is a filter date. Note that the query is BETWEEN start_date AND end_date",
+            description=(
+                "Date to end our search on, applies to Streams where there is a filter "
+                "date. Note that the query is BETWEEN start_date AND end_date"
+            ),
         ),
     ).to_dict()
 

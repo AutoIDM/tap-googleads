@@ -1,19 +1,14 @@
 """Tests standard tap features using the built-in SDK tests library."""
 
 import datetime
-from pathlib import Path
 
-from singer_sdk.testing import get_standard_tap_tests
 from singer_sdk.tap_base import Tap
 from singer_sdk.streams.core import Stream
-from singer_sdk.exceptions import FatalAPIError
 import tap_googleads.tap
 import pytest
 import json
-import importlib
 
 import responses
-import requests
 
 SAMPLE_CONFIG = {
     "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
@@ -41,7 +36,6 @@ def mocked_responses():
 
 
 def test_customer_not_enabled(mocked_responses):
-
     auth_response = {
         "access_token": "access_granted",
         "expires_in": "10000000",
@@ -69,7 +63,7 @@ def test_customer_not_enabled(mocked_responses):
     mocked_responses.add(
         responses.POST,
         # TODO cleanup long url, googleads.googleapis.com/* would suffice
-        "https://googleads.googleapis.com/v12/customers/12345/googleAds:search?pageSize=10000&query=%0A%20%20%20%20%20%20%20%20%20%20%20%20SELECT%20campaign.id%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20,%20campaign.name%0A%20%20%20%20%20%20%20%20%20%20%20%20FROM%20campaign%20%0A%20%20%20%20%20%20%20%20%20%20%20%20ORDER%20BY%20campaign.id%0A%20%20%20%20%20%20%20%20",
+        "https://googleads.googleapis.com/v14/customers/12345/googleAds:search?pageSize=10000&query=%0A%20%20%20%20%20%20%20%20%20%20%20%20SELECT%20campaign.id%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20,%20campaign.name%0A%20%20%20%20%20%20%20%20%20%20%20%20FROM%20campaign%20%0A%20%20%20%20%20%20%20%20%20%20%20%20ORDER%20BY%20campaign.id%0A%20%20%20%20%20%20%20%20",
         body=json.dumps(customer_not_enabled_body).encode("utf-8"),
         status=403,
         content_type="application/json",

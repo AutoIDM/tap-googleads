@@ -26,6 +26,8 @@ THIS IS NOT READY FOR PRODUCTION. Bearer tokens sometimes slip out to logs. Use 
 | start_date       | True     | 2022-03-24T00:00:00Z (Today-7d) | Date to start our search from, applies to Streams where there is a filter date. Note that Google responds to Data in buckets of 1 Day increments |
 | end_date         | True     | 2022-03-31T00:00:00Z (Today) | Date to end our search on, applies to Streams where there is a filter date. Note that the query is BETWEEN start_date AND end_date |
 
+Note that although customer IDs are often displayed in the Google Ads UI in the format 123-456-7890, they should be provided to the tap in the format 1234567890, with no dashes.
+
 ### Get refresh token
 1. GET https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=client_id&redirect_uri=http://127.0.0.1&scope=https://www.googleapis.com/auth/adwords&state=autoidm&access_type=offline&prompt=select_account&include_granted_scopes=true
 1. POST https://www.googleapis.com/oauth2/v4/token?code={code}&client_id={client_id}&client_secret={client_secret}&redirect_uri=http://127.0.0.1&grant_type=authorization_code
