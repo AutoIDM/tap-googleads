@@ -33,6 +33,9 @@
         "metrics": {
             "type": "object",
             "properties": {
+                "conversions": {
+                    "type": "number"
+                },
                 "clicks": {
                     "type": "string"
                 },
