@@ -280,6 +280,7 @@ class CampaignPerformance(ReportsStream):
                  , campaign.advertising_channel_sub_type
                  , segments.device
                  , segments.date
+                 , metrics.conversions
                  , metrics.impressions
                  , metrics.clicks
                  , metrics.ctr
