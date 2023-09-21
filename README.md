@@ -23,7 +23,7 @@ THIS IS NOT READY FOR PRODUCTION. Bearer tokens sometimes slip out to logs. Use 
 | refresh_token    | True     | None    | Refresh Token from Oauth dance |
 | customer_id      | True     | None    | Customer ID from Google Ads Console, note this should be the top level client. This tap will pull all subaccounts |
 | login_customer_id| True     | None    | Customer ID that has access to the customer_id, note that they can be the same, but they don't have to be as this could be a Manager account |
-| start_date       | True     | 2022-03-24T00:00:00Z (Today-7d) | Date to start our search from, applies to Streams where there is a filter date. Note that Google responds to Data in buckets of 1 Day increments |
+| start_date       | True     | 2022-03-24T00:00:00Z (Today-90d) | Date to start our search from, applies to Streams where there is a filter date. Note that Google responds to Data in buckets of 1 Day increments |
 | end_date         | True     | 2022-03-31T00:00:00Z (Today) | Date to end our search on, applies to Streams where there is a filter date. Note that the query is BETWEEN start_date AND end_date |
 
 Note that although customer IDs are often displayed in the Google Ads UI in the format 123-456-7890, they should be provided to the tap in the format 1234567890, with no dashes.

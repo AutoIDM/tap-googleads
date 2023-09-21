@@ -1,24 +1,24 @@
 """GoogleAds tap class."""
 
+from datetime import date, timedelta
 from typing import List
 
-from singer_sdk import Tap, Stream
+from singer_sdk import Stream, Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
-from datetime import date, timedelta
 
 from tap_googleads.streams import (
-    CampaignsStream,
-    AdGroupsStream,
-    AdGroupsPerformance,
     AccessibleCustomers,
-    CustomerHierarchyStream,
+    AdGroupsPerformance,
+    AdGroupsStream,
+    CampaignLabel,
     CampaignPerformance,
     CampaignPerformanceByAgeRangeAndDevice,
     CampaignPerformanceByGenderAndDevice,
     CampaignPerformanceByLocation,
-    GeotargetsStream,
+    CampaignsStream,
     ConversionsByLocation,
-    CampaignLabel,
+    CustomerHierarchyStream,
+    GeotargetsStream,
 )
 
 STREAM_TYPES = [
@@ -89,7 +89,7 @@ class TapGoogleAds(Tap):
         th.Property(
             "start_date",
             th.DateTimeType,
-            default=(date.today() - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            default=(date.today() - timedelta(days=90)).strftime("%Y-%m-%dT%H:%M:%SZ"),
             required=True,
             description=(
                 "Date to start our search from, applies to Streams where there is a "
