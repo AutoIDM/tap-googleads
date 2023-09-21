@@ -7,7 +7,9 @@ from tap_googleads.tap import TapGoogleAds
 
 
 SAMPLE_CONFIG = {
-    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    ),
     "client_id": "12345",
     "client_secret": "12345",
     "developer_token": "12345",
